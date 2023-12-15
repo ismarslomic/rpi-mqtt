@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Ismar Slomic <ismar@slomic.no>"]
 readme = "README.md"
+packages = [{include = "rpi_mqtt", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
