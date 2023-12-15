@@ -4,11 +4,13 @@ version = "0.1.0"
 description = ""
 authors = ["Ismar Slomic <ismar@slomic.no>"]
 readme = "README.md"
-packages = [{include = "rpi_mqtt", from = "src"}]
+packages = [{ include = "mqtt", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.12"
 
+[tool.poetry.scripts]
+pub-sub = "mqtt.pub_sub:main"
 
 [build-system]
 requires = ["poetry-core"]

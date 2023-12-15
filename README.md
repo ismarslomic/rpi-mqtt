@@ -5,7 +5,7 @@
 Run script
 
 ```bash
-poetry run my-script
+poetry run pub-sub
 ```
 
 Start shell
