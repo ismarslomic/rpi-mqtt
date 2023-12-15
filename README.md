@@ -1,8 +1,13 @@
 # Raspberry Pi - Mqtt pub/sub client
 
+## Python Modules
+
+- `mqtt.pub` - utilities for publishing to MQTT topics
+- `mqtt.sub` - utilities for subscribing to MQTT topics
+
 ## Development
 
-Run script
+Run main script that publish and subscribes to MQTT
 
 ```bash
 poetry run pub-sub
@@ -21,6 +26,7 @@ poetry install
 ```
 
 Install package
+
 ```bash
 poetry add <package>
 ```
