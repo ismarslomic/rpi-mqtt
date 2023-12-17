@@ -51,6 +51,11 @@ Install [git hooks scripts](https://pre-commit.com)
 pre-commit install
 ```
 
+Run the hooks against all files
+```bash
+pre-commit run --all-files
+```
+
 Add _main_ package
 
 ```bash
