@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+"""Module for publishing messages to Mqtt topic"""
 
 
 def publish():
+    """Publish message to MQTT topic"""
+
     print("Mqtt publish")
 
 

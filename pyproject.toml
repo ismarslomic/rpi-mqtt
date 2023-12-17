@@ -13,6 +13,7 @@ psutil = "^5.9.6"
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
 black = "^23.12.0"
+pylint = "^3.0.3"
 
 [tool.poetry.scripts]
 pub-sub = "mqtt.pub_sub:main"
@@ -31,3 +32,13 @@ addopts = [
 # https://github.com/psf/black
 line-length = 120
 target_version = ['py310']
+
+[tool.pylint]
+good-names = "a,b,c,d,e,f,g,h,i,j,k,m,n,o,p,q,r,s,t,u,v,w,x,y,z,_,ch,ci,db,ex,it,lt,md,vf,ok"
+max-line-length = 120
+no-docstring-rgx = "^_.*|^test_.*|^.*_test"
+
+disable = [
+    "W0511", # (fixme)
+    "R1711", # (useless-return)
+]

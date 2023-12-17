@@ -75,3 +75,11 @@ or fix the issues automatically:
 ```bash
 poetry run black src tests
 ```
+
+## Static code analysis
+
+[Pylint](https://pylint.pycqa.org/en/latest/) is used for static code analysis.
+
+```bash
+poetry run pylint src
+```

@@ -44,7 +44,7 @@ def __read_gpu_temperature() -> HwTemperature:
 
     # doc: https://www.raspberrypi.com/documentation/computers/os.html#vcgencmd
     args = ["vcgencmd", "measure_temp"]
-    result = subprocess.run(args, capture_output=True, text=True)
+    result = subprocess.run(args, capture_output=True, text=True, check=False)
 
     if result.returncode != 0:
         raise RuntimeError("Failed to read GPU temperature", result.stderr)

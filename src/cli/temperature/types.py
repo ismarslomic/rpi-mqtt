@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Types in module Temperature"""
+
 from dataclasses import dataclass
 from typing import Optional
 
