@@ -33,22 +33,34 @@ Start shell
 poetry shell
 ```
 
-Install dependencies
+Install all dependencies (_main_ and _dev_)
 
 ```bash
 poetry install
 ```
 
-Install package
+Install _main_ dependencies only
+
+```bash
+poetry install --only main
+```
+
+Install [git hooks scripts](https://pre-commit.com)
+
+```bash
+pre-commit install
+```
+
+Add _main_ package
 
 ```bash
 poetry add <package>
 ```
 
-Install dev package
+Add _dev_ package
 
 ```bash
-poetry add --dev <package>
+poetry add <package> --group dev
 ```
 
 Update all dependencies to latest version
