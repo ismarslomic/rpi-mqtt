@@ -43,21 +43,25 @@ Update all dependencies to latest version
 poetry update
 ```
 
-## Testing
+### Testing
 
-### Run tests in command line
+#### Run tests in command line
+
+[pytest](https://docs.pytest.org/en/latest/) is used as test framework.
 
 ```bash
 poetry run pytest
 ```
 
-### Create test coverage
+#### Create test coverage
+
+[pytest-cov](https://pypi.org/project/pytest-cov/) is used to produce test coverage reports.
 
 ```bash
 poetry run coverage run -m pytest -vv && poetry run coverage report
 ```
 
-### Run tests in IntelliJ
+#### Run tests in IntelliJ
 
 In order to run tests easily in IntelliJ you should install the
 plugin [pytest imp](https://plugins.jetbrains.com/plugin/14202-pytest-imp).
@@ -65,10 +69,10 @@ plugin [pytest imp](https://plugins.jetbrains.com/plugin/14202-pytest-imp).
 You should also configure the path to the pyproject.toml in the pytest plugin at _Settings > Tools > Python Integrated
 Tools > py.test_
 
-## Code style
+### Code style
 
-This repo use [Black code style](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html) for
-Python.
+[Black code style](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html) is used as code
+style.
 
 You can do a style check, without fixing the issues:
 
@@ -82,7 +86,7 @@ or fix the issues automatically:
 poetry run black src tests
 ```
 
-## Static code analysis
+### Static code analysis
 
 [Pylint](https://pylint.pycqa.org/en/latest/) is used for static code analysis.
 
@@ -90,7 +94,7 @@ poetry run black src tests
 poetry run pylint src
 ```
 
-## Import ordering
+### Import ordering
 
 [isort](https://pycqa.github.io/isort/) is used to verify import ordering.
 
