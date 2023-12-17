@@ -9,24 +9,21 @@ from cli.temperature.types import HwTemperature
 
 
 # patching platform since sensors_temperatures is not available for all platforms
-@patch('sys.platform', 'linux')
+@patch("sys.platform", "linux")
 # patching vcgencmd command run by the subprocess.run
-@patch('cli.temperature.temperature.subprocess.run')
+@patch("cli.temperature.temperature.subprocess.run")
 def test_read_temperature(mock_run):
     # Mock psutil
     psutil_mock = {
-        'cpu_thermal': [{
-            "label": '',
-            "current": 46.3,
-            "high": 110.0,
-            "critical": 110.0
-        }],
-        'rp1_adc': [{
-            "label": '',
-            "current": 54.31,
-            "high": None,
-            "critical": None,
-        }],
+        "cpu_thermal": [{"label": "", "current": 46.3, "high": 110.0, "critical": 110.0}],
+        "rp1_adc": [
+            {
+                "label": "",
+                "current": 54.31,
+                "high": None,
+                "critical": None,
+            }
+        ],
     }
     psutil.sensors_temperatures = MagicMock(return_value=psutil_mock)
 

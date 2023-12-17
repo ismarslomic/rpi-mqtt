@@ -29,10 +29,10 @@ def __read_temperatures() -> list[HwTemperature]:
         for temp_measurement in temp_measurements:
             hw_temperatures.append(
                 HwTemperature(
-                    name=temp_measurement['label'] or temp_name,
-                    current=temp_measurement['current'],
-                    high=temp_measurement['high'],
-                    critical=temp_measurement['critical']
+                    name=temp_measurement["label"] or temp_name,
+                    current=temp_measurement["current"],
+                    high=temp_measurement["high"],
+                    critical=temp_measurement["critical"],
                 )
             )
 
@@ -40,7 +40,7 @@ def __read_temperatures() -> list[HwTemperature]:
 
 
 def __read_gpu_temperature() -> HwTemperature:
-    """Read GPU temperature of the RPI """
+    """Read GPU temperature of the RPI"""
 
     # doc: https://www.raspberrypi.com/documentation/computers/os.html#vcgencmd
     args = ["vcgencmd", "measure_temp"]
@@ -52,9 +52,4 @@ def __read_gpu_temperature() -> HwTemperature:
     # result.stdout: temp=51.0'C
     temp: float = result.stdout.replace("\n", "").replace("temp=", "").replace("'C", "")
 
-    return HwTemperature(
-        name="gpu",
-        current=temp,
-        high=None,
-        critical=None
-    )
+    return HwTemperature(name="gpu", current=temp, high=None, critical=None)
