@@ -31,8 +31,24 @@ Install package
 poetry add <package>
 ```
 
+Install dev package
+
+```bash
+poetry add --dev <package>
+```
+
 Update all dependencies to latest version
 
 ```bash
 poetry update
 ```
+
+## Testing
+
+### Run tests in IntelliJ
+
+In order to run tests easily in IntelliJ you should install the
+plugin [pytest imp](https://plugins.jetbrains.com/plugin/14202-pytest-imp).
+
+You should also configure the path to the pyproject.toml in the pytest plugin at _Settings > Tools > Python Integrated
+Tools > py.test_

@@ -8,6 +8,10 @@ packages = [{ include = "mqtt", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.12"
+psutil = "^5.9.6"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
 
 [tool.poetry.scripts]
 pub-sub = "mqtt.pub_sub:main"
@@ -15,3 +19,9 @@ pub-sub = "mqtt.pub_sub:main"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+log_level = "debug"
+addopts = [
+    "--import-mode=importlib",
+]
