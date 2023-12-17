@@ -15,6 +15,7 @@ pytest = "^7.4.3"
 black = "^23.12.0"
 pylint = "^3.0.3"
 isort = "^5.13.2"
+pytest-cov = "^4.1.0"
 
 [tool.poetry.scripts]
 pub-sub = "mqtt.pub_sub:main"
@@ -27,6 +28,16 @@ build-backend = "poetry.core.masonry.api"
 log_level = "debug"
 addopts = [
     "--import-mode=importlib",
+]
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.coverage.report]
+skip_empty = true
+show_missing = true
+exclude_lines = [
+    "if __name__ == .__main__.:"
 ]
 
 [tool.black]

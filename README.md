@@ -51,6 +51,12 @@ poetry update
 poetry run pytest
 ```
 
+### Create test coverage
+
+```bash
+poetry run coverage run -m pytest -vv && poetry run coverage report
+```
+
 ### Run tests in IntelliJ
 
 In order to run tests easily in IntelliJ you should install the
