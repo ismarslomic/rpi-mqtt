@@ -4,6 +4,7 @@
 import subprocess
 
 import psutil
+
 from cli.temperature.types import HwTemperature
 
 

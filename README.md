@@ -83,3 +83,19 @@ poetry run black src tests
 ```bash
 poetry run pylint src
 ```
+
+## Import ordering
+
+[isort](https://pycqa.github.io/isort/) is used to verify import ordering.
+
+You can do a check, without fixing the issues:
+
+```bash
+poetry run isort src tests --check --diff
+```
+
+or fix the issues automatically:
+
+```bash
+poetry run isort src tests
+```

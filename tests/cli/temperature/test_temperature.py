@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Tests to verify the temperature readings of Rpi hardware components"""
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import psutil
+
 from cli.temperature.temperature import read_temperature
 from cli.temperature.types import HwTemperature
 
