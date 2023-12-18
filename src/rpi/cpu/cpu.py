@@ -4,10 +4,10 @@
 import psutil
 
 
-def read_cpu_percent() -> float:
+def read_cpu_use_percent() -> float:
     """Return a float representing the current system-wide CPU utilization as a percentage"""
 
     # doc: https://psutil.readthedocs.io/en/latest/
-    cpu_percent: float = psutil.cpu_percent(interval=0.1)
+    cpu_use_percent: float = psutil.cpu_percent(interval=0.1)
 
-    return cpu_percent
+    return cpu_use_percent
