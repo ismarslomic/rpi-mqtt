@@ -5,14 +5,14 @@ from unittest.mock import MagicMock, patch
 
 import psutil
 
-from cli.temperature.temperature import read_temperature
-from cli.temperature.types import HwTemperature
+from rpi.temperature.temperature import read_temperature
+from rpi.temperature.types import HwTemperature
 
 
 # patching platform since sensors_temperatures is not available for all platforms
 @patch("sys.platform", "linux")
 # patching vcgencmd command run by the subprocess.run
-@patch("cli.temperature.temperature.subprocess.run")
+@patch("rpi.temperature.temperature.subprocess.run")
 def test_read_temperature(mock_run):
     # Mock psutil
     psutil_mock = {

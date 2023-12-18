@@ -5,7 +5,7 @@ import subprocess
 
 import psutil
 
-from cli.temperature.types import HwTemperature
+from rpi.temperature.types import HwTemperature
 
 
 def read_temperature() -> list[HwTemperature]:
