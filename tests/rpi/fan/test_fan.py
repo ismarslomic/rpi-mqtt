@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Tests to verify the fans speed of Rpi hardware components"""
+
 from collections import namedtuple
 from unittest.mock import MagicMock, patch
 
