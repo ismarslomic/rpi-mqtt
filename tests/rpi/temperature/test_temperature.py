@@ -9,8 +9,6 @@ from rpi.temperature.temperature import read_temperature
 from rpi.temperature.types import HwTemperature
 
 
-# patching platform since psutil.sensors_temperatures is not available for all platforms
-@patch("sys.platform", "linux")
 # patching vcgencmd command run by the subprocess.run
 @patch("rpi.temperature.temperature.subprocess.run")
 def test_read_temperature(mock_run):
