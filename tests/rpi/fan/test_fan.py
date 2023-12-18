@@ -2,7 +2,7 @@
 """Tests to verify the fans speed of Rpi hardware components"""
 
 from collections import namedtuple
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import psutil
 
@@ -10,8 +10,6 @@ from rpi.fan.fan import read_fans_speed
 from rpi.fan.types import FanSpeed
 
 
-# patching platform since psutil.sensors_fans() is not available for all platforms
-@patch("sys.platform", "linux")
 def test_read_fans_speed():
     # Mock psutil
     fans_tuple = namedtuple("sfan", ["label", "current"])
@@ -28,8 +26,7 @@ def test_read_fans_speed():
     assert 2998 == fans_speed[0].speed
 
 
-@patch("sys.platform", "linux")
-def test_read_fans_speed_empty():
+def test_read_fans_when_no_fans():
     # Mock psutil
     psutil_mock: dict[str, list] = {}
     psutil.sensors_fans = MagicMock(return_value=psutil_mock)
