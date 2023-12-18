@@ -52,6 +52,7 @@ pre-commit install
 ```
 
 Run the hooks against all files
+
 ```bash
 pre-commit run --all-files
 ```
@@ -68,10 +69,11 @@ Add _dev_ package
 poetry add <package> --group dev
 ```
 
-Update all dependencies to latest version
+Check and update outdated dependencies
 
 ```bash
-poetry update
+poetry show --outdated
+poetry add <outdated package>@latest
 ```
 
 ## Testing
