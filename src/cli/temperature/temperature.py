@@ -51,6 +51,7 @@ def __read_gpu_temperature() -> HwTemperature:
         raise RuntimeError("Failed to read GPU temperature", result.stderr)
 
     # result.stdout: temp=51.0'C
-    temp: float = result.stdout.replace("\n", "").replace("temp=", "").replace("'C", "")
+    temp_str: str = result.stdout.replace("\n", "").replace("temp=", "").replace("'C", "")
+    temp_rounded: float = round(float(temp_str), 1)
 
-    return HwTemperature(name="gpu", current=temp, high=None, critical=None)
+    return HwTemperature(name="gpu", current=temp_rounded, high=None, critical=None)
