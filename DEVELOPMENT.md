@@ -27,6 +27,12 @@ Upgrade poetry
 pipx upgrade poetry
 ```
 
+or
+
+```bash
+poetry self update
+```
+
 Start shell
 
 ```bash

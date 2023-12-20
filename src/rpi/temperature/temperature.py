@@ -5,7 +5,7 @@ import subprocess
 
 import psutil
 
-from cli.temperature.types import HwTemperature
+from rpi.temperature.types import HwTemperature
 
 
 def read_temperature() -> list[HwTemperature]:
@@ -18,7 +18,7 @@ def read_temperature() -> list[HwTemperature]:
 
 
 def __read_temperatures() -> list[HwTemperature]:
-    """Read available temperatures, such as for CPU and ADC"""
+    """Read available temperatures, such as for CPU and ADC using the psutil module"""
     hw_temperatures: list[HwTemperature] = []
 
     # doc: https://psutil.readthedocs.io/en/latest/
@@ -31,7 +31,7 @@ def __read_temperatures() -> list[HwTemperature]:
             hw_temperatures.append(
                 HwTemperature(
                     name=temp_measurement["label"] or temp_name,
-                    current=temp_measurement["current"],
+                    current=__round_temp(temp_measurement["current"]),
                     high=temp_measurement["high"],
                     critical=temp_measurement["critical"],
                 )
@@ -41,7 +41,7 @@ def __read_temperatures() -> list[HwTemperature]:
 
 
 def __read_gpu_temperature() -> HwTemperature:
-    """Read GPU temperature of the RPI"""
+    """Read GPU temperature of the RPI using the RPI vcgencmd cli"""
 
     # doc: https://www.raspberrypi.com/documentation/computers/os.html#vcgencmd
     args = ["vcgencmd", "measure_temp"]
@@ -51,6 +51,13 @@ def __read_gpu_temperature() -> HwTemperature:
         raise RuntimeError("Failed to read GPU temperature", result.stderr)
 
     # result.stdout: temp=51.0'C
-    temp: float = result.stdout.replace("\n", "").replace("temp=", "").replace("'C", "")
+    temp_str: str = result.stdout.replace("\n", "").replace("temp=", "").replace("'C", "")
+    temp_rounded: float = __round_temp(temp=float(temp_str))
 
-    return HwTemperature(name="gpu", current=temp, high=None, critical=None)
+    return HwTemperature(name="gpu", current=temp_rounded, high=None, critical=None)
+
+
+def __round_temp(temp: float) -> float:
+    """Round temp value to 1 decimal"""
+
+    return round(temp, 1)
