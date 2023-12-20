@@ -17,3 +17,15 @@ def test_read_cpu_use_percent():
 
     # Assert
     assert 0.2 == cpu_use_percent
+
+
+def test_read_load_average():
+    # Mock psutil
+    psutil.cpu_count = MagicMock(return_value=4)
+    psutil.getloadavg = MagicMock(return_value=[])
+
+    # Call function
+    cpu_use_percent: float = read_cpu_use_percent()
+
+    # Assert
+    assert 0.2 == cpu_use_percent
