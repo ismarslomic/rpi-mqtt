@@ -21,7 +21,7 @@ def read_load_average() -> LoadAverage:
     # doc: https://psutil.readthedocs.io/en/latest/
     cpu_cores: int = psutil.cpu_count()
     load_avg: tuple[float, float, float] = psutil.getloadavg()
-    load_avg_percent = [x / cpu_cores * 100 for x in load_avg]
+    load_avg_percent: list[float] = [x / cpu_cores * 100 for x in load_avg]
 
     return LoadAverage(
         cpu_cores=cpu_cores,
