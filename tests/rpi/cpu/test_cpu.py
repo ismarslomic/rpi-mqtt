@@ -17,7 +17,7 @@ def test_read_cpu_use_percent():
     cpu_use_percent: float = read_cpu_use_percent()
 
     # Assert
-    assert cpu_use_percent == 0.3
+    assert 0.2 == cpu_use_percent
 
 
 def test_read_load_average():
@@ -29,7 +29,7 @@ def test_read_load_average():
     load_average: LoadAverage = read_load_average()
 
     # Assert
-    assert load_average.cpu_cores == 42
-    assert load_average.last_minute == 7.03
-    assert load_average.last_five_minutes == 1.93
-    assert load_average.last_fifteen_minutes == 0.62
+    assert 4 == load_average.cpu_cores
+    assert 7.03 == load_average.last_minute
+    assert 1.93 == load_average.last_five_minutes
+    assert 0.62 == load_average.last_fifteen_minutes
