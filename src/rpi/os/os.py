@@ -14,3 +14,13 @@ def read_rpi_os_kernel() -> str:
         raise RuntimeError("Failed to read OS kernel version", result.stderr)
 
     return result.stdout
+
+
+def read_os_release() -> str:
+    """Read OS release"""
+
+    release_file_name = "/etc/os-release"
+    with open(release_file_name, "r") as f:
+        release = f.readline().replace("PRETTY_NAME=", "").replace("\n", "").replace('"', "").strip()
+
+    return release
