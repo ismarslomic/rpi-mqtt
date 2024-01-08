@@ -4,6 +4,9 @@
 import re
 import socket
 import struct
+import subprocess
+
+from rpi.network.types import WiFiConnectionInfo
 
 
 def read_container_host_ip() -> str:
@@ -41,6 +44,32 @@ def read_container_host_hostname() -> str:
         host_name = f.readline().strip()
 
     return host_name
+
+
+def read_wifi_connection() -> WiFiConnectionInfo:
+    """Read Wi-Fi connection, such as ssid and signal strength"""
+
+    # doc: https://wireless.wiki.kernel.org/en/users/Documentation/iw
+    args = ["iw", "wlan0", "link"]
+    result = subprocess.run(args, capture_output=True, text=True, check=False)
+
+    if result.returncode != 0:
+        raise RuntimeError("Failed to read Wi-Fi connection", result.stderr)
+
+    result_as_list = result.stdout.split("\n")
+    ssid: str = ""
+    signal: int = 0
+
+    for item in result_as_list:
+        item_stripped = item.strip()
+        if item_stripped.startswith("SSID:"):
+            item_split = item_stripped.split("SSID: ")
+            ssid = item_split[1].strip()
+        elif item_stripped.startswith("signal:"):
+            item_split = item_stripped.split("signal: ")
+            signal = int(item_split[1].replace("dBm", "").strip())
+
+    return WiFiConnectionInfo(ssid=ssid, signal_strength_dbm=signal)
 
 
 def _little_endian_hex_to_ip(little_endian_hex) -> str:
