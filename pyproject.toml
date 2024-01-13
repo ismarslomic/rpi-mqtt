@@ -46,10 +46,22 @@ exclude_lines = [
 line-length = 120
 target_version = ['py310']
 
+[tool.isort]
+# https://github.com/timothycrosley/isort
+# https://github.com/timothycrosley/isort/wiki/isort-Settings
+line_length = 120
+indent = '    '
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+
 [tool.pylint]
 good-names = "a,b,c,d,e,f,g,h,i,j,k,m,n,o,p,q,r,s,t,u,v,w,x,y,z,_,ch,ci,db,ex,it,lt,md,vf,ok"
 max-line-length = 120
 no-docstring-rgx = "^_.*|^test_.*|^.*_test"
+
+# max class attributes
+max-attributes=20
 
 disable = [
     "W0511", # (fixme)
