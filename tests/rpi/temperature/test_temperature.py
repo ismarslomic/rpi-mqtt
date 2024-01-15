@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Tests to verify the temperature readings of Rpi hardware components"""
 
+import collections
+from collections import defaultdict, namedtuple
 from unittest.mock import MagicMock, patch
 
 import psutil
@@ -13,18 +15,12 @@ from rpi.temperature.types import HwTemperature
 @patch("rpi.temperature.temperature.subprocess.run")
 def test_read_temperature(mock_run):
     # Mock psutil
-    psutil_mock = {
-        "cpu_thermal": [{"label": "", "current": 46.365, "high": 110.0, "critical": 110.0}],
-        "rp1_adc": [
-            {
-                "label": "",
-                "current": 54.31,
-                "high": None,
-                "critical": None,
-            }
-        ],
-    }
-    psutil.sensors_temperatures = MagicMock(return_value=psutil_mock)
+    ret: defaultdict[str, list] = collections.defaultdict(list)
+    shwtemp = namedtuple("shwtemp", ["label", "current", "high", "critical"])
+    ret["cpu_thermal"].append(shwtemp("", 46.365, 110.0, 110.0))
+    ret["rp1_adc"].append(shwtemp("", 54.31, None, None))
+
+    psutil.sensors_temperatures = MagicMock(return_value=ret)
 
     # Mock subprocess.run running vcgencmd to read GPU temperature
     mock_proc = MagicMock(returncode=0, stdout="temp=51.0'C")

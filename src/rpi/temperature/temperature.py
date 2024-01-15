@@ -2,6 +2,7 @@
 """Service for reading the Rpi temperatures (i.e for CPU and GPU) by running linux commands"""
 
 import subprocess
+from collections import defaultdict
 
 import psutil
 
@@ -22,7 +23,7 @@ def __read_temperatures() -> list[HwTemperature]:
     hw_temperatures: list[HwTemperature] = []
 
     # doc: https://psutil.readthedocs.io/en/latest/
-    temps: dict = psutil.sensors_temperatures()
+    temps: defaultdict[str, list] = psutil.sensors_temperatures()
     if not temps:
         return hw_temperatures
 
@@ -30,10 +31,10 @@ def __read_temperatures() -> list[HwTemperature]:
         for temp_measurement in temp_measurements:
             hw_temperatures.append(
                 HwTemperature(
-                    name=temp_measurement["label"] or temp_name,
-                    current=__round_temp(temp_measurement["current"]),
-                    high=temp_measurement["high"],
-                    critical=temp_measurement["critical"],
+                    name=temp_measurement.label or temp_name,
+                    current=__round_temp(temp_measurement.current),
+                    high=temp_measurement.high,
+                    critical=temp_measurement.critical,
                 )
             )
 
