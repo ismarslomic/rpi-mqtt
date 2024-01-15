@@ -14,7 +14,7 @@ def read_container_host_ip() -> str:
 
     ip_pipe_file_name = "/app/host/host_ip_pipe"
     with open(ip_pipe_file_name, "r", encoding="utf-8") as f:
-        tcp_content = f.readline().strip("\x00")
+        tcp_content = f.read().strip("\x00")
         return _parse_ip_from_tcp_content(tcp_content)
 
 
