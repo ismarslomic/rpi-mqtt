@@ -10,18 +10,18 @@ from rpi.network.types import WiFiConnectionInfo
 
 
 def read_container_host_ip() -> str:
-    """Read Rpi IP (the host IP when running in Docker)"""
+    """Read Rpi IP"""
 
-    ip_pipe_file_name = "/app/host/host_ip_pipe"
+    ip_pipe_file_name = "/proc/net/tcp"
     with open(ip_pipe_file_name, "r", encoding="utf-8") as f:
         tcp_content = f.read().strip("\x00")
         return _parse_ip_from_tcp_content(tcp_content)
 
 
 def read_container_host_hostname() -> str:
-    """Read Rpi hostname (the host hostname when running in Docker)"""
+    """Read Rpi hostname"""
 
-    host_name_file_name = "/app/host/hostname"
+    host_name_file_name = "/etc/hostname"
     with open(host_name_file_name, "r", encoding="utf-8") as f:
         host_name = f.readline().strip()
 
