@@ -42,7 +42,7 @@ class RpiMonitorSummary:
     mac_address: str
     os_kernel: str
     os_release: str
-    number_of_available_updates: int
+    available_updates: int
     temperature: list[HwTemperature]
     throttle_status: SystemThrottleStatus
 
@@ -68,7 +68,7 @@ monitor_summary = RpiMonitorSummary(
     mac_address=read_ethernet_mac_address(),
     os_kernel=read_rpi_os_kernel(),
     os_release=read_os_release(),
-    number_of_available_updates=read_number_of_available_updates(),
+    available_updates=read_number_of_available_updates(),
     temperature=read_temperature(),
     throttle_status=read_throttle_status(),
 )
