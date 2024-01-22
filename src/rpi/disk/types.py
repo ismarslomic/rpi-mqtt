@@ -11,14 +11,14 @@ class DiskUse:
     path: str
     """The mount path. Example: '/'"""
 
-    total: float
+    total_gib: float
     """Total disk space, in gibibytes (GiB). Example: '28.69'"""
 
-    used: float
+    used_gib: float
     """Used disk space, in gibibytes (GiB). Example: '10.93'"""
 
-    used_percent: float
+    used_pct: float
     """Used disk space, in percent. Example: '40.2'"""
 
-    free: float
+    free_gib: float
     """Free disk space, in gibibytes (GiB). Example: '16.28'"""

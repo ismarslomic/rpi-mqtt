@@ -11,5 +11,5 @@ class FanSpeed:
     name: str
     """Name of the fan, representing a certain hardware sensor fan. Example: 'pwmfan'"""
 
-    speed: int
+    speed_rpm: int
     """Current speed, measured in RPM (revolutions per minute). Example: '2998'"""

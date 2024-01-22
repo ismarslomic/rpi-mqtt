@@ -20,6 +20,6 @@ def test_read_memory_use():
     memory_use: MemoryUse = read_memory_use()
 
     # Assert
-    assert 7.86 == memory_use.total
-    assert 6.43 == memory_use.available
-    assert 18.2 == memory_use.used_percent
+    assert 7.86 == memory_use.total_gib
+    assert 6.43 == memory_use.available_gib
+    assert 18.2 == memory_use.used_pct

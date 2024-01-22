@@ -23,7 +23,7 @@ def test_read_fans_speed():
     assert 1 == len(fans_speed)
 
     assert "pwmfan" == fans_speed[0].name
-    assert 2998 == fans_speed[0].speed
+    assert 2998 == fans_speed[0].speed_rpm
 
 
 def test_read_fans_when_no_fans():

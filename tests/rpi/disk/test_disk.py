@@ -21,7 +21,7 @@ def test_read_disk_use():
 
     # Assert
     assert "/" == disk_use.path
-    assert 28.69 == disk_use.total
-    assert 10.93 == disk_use.used
-    assert 40.2 == disk_use.used_percent
-    assert 16.28 == disk_use.free
+    assert 28.69 == disk_use.total_gib
+    assert 10.93 == disk_use.used_gib
+    assert 40.2 == disk_use.used_pct
+    assert 16.28 == disk_use.free_gib

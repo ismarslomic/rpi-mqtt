@@ -29,20 +29,20 @@ from rpi.throttle.types import SystemThrottleStatus
 class RpiMonitorSummary:
     """Class representing summary of all Rpi monitor sensors"""
 
-    bootloader_version: BootloaderVersion
-    cpu_use_percent: float
-    cpu_load_average: LoadAverage
-    disk_usage: DiskUse
-    fan_spead: list[FanSpeed]
-    memory_usage: MemoryUse
-    model: str
+    rpi_model: str
     ip: str
     host_name: str
-    wifi_connection_ip: WiFiConnectionInfo
-    mac_address: str
+    eth_mac: str
     os_kernel: str
     os_release: str
-    available_updates: int
+    avail_updates: int
+    bootloader_ver: BootloaderVersion
+    cpu_use_pct: float
+    cpu_load_average: LoadAverage
+    disk_usage: DiskUse
+    memory_usage: MemoryUse
+    fan_spead: list[FanSpeed]
+    wifi_connection_ip: WiFiConnectionInfo
     temperature: list[HwTemperature]
     throttle_status: SystemThrottleStatus
 
@@ -55,20 +55,20 @@ class RpiMonitorSummaryEncoder(JSONEncoder):
 
 
 monitor_summary = RpiMonitorSummary(
-    bootloader_version=read_rpi_bootloader_version(),
-    cpu_use_percent=read_cpu_use_percent(),
-    cpu_load_average=read_load_average(),
-    disk_usage=read_disk_use(),
-    fan_spead=read_fans_speed(),
-    memory_usage=read_memory_use(),
-    model=read_rpi_model(),
+    rpi_model=read_rpi_model(),
     ip=read_ip(),
     host_name=read_hostname(),
-    wifi_connection_ip=read_wifi_connection(),
-    mac_address=read_ethernet_mac_address(),
+    eth_mac=read_ethernet_mac_address(),
     os_kernel=read_rpi_os_kernel(),
     os_release=read_os_release(),
-    available_updates=read_number_of_available_updates(),
+    avail_updates=read_number_of_available_updates(),
+    bootloader_ver=read_rpi_bootloader_version(),
+    cpu_use_pct=read_cpu_use_percent(),
+    cpu_load_average=read_load_average(),
+    disk_usage=read_disk_use(),
+    memory_usage=read_memory_use(),
+    fan_spead=read_fans_speed(),
+    wifi_connection_ip=read_wifi_connection(),
     temperature=read_temperature(),
     throttle_status=read_throttle_status(),
 )

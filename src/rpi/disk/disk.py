@@ -17,10 +17,10 @@ def read_disk_use() -> DiskUse:
 
     return DiskUse(
         path=path,
-        total=__bytes_to_gibibytes(disk_usage.total),
-        used=__bytes_to_gibibytes(disk_usage.used),
-        used_percent=__round_percent(disk_usage.percent),
-        free=__bytes_to_gibibytes(disk_usage.free),
+        total_gib=__bytes_to_gibibytes(disk_usage.total),
+        used_gib=__bytes_to_gibibytes(disk_usage.used),
+        used_pct=__round_percent(disk_usage.percent),
+        free_gib=__bytes_to_gibibytes(disk_usage.free),
     )
 
 

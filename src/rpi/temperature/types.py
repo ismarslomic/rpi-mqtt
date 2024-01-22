@@ -12,11 +12,11 @@ class HwTemperature:
     name: str
     """Name of the hardware component temperature is measured for. Exampel: 'cpu_thermal'"""
 
-    current: float
+    current_c: float
     """Current temperature for the hardware, in celsius. Example: '46.85'"""
 
-    high: Optional[float]
+    high_c: Optional[float]
     """Threshold for high temperature, in celsius. Example: '110.0'"""
 
-    critical: Optional[float]
+    critical_c: Optional[float]
     """Threshold for critical temperature, in celsius. Example: '110.0'"""

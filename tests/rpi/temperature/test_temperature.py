@@ -34,18 +34,18 @@ def test_read_temperature(mock_run):
 
     cpu_temp: HwTemperature = temps[0]
     assert "cpu_thermal" == cpu_temp.name
-    assert 46.4 == cpu_temp.current
-    assert 110.0 == cpu_temp.high
-    assert 110.0 == cpu_temp.critical
+    assert 46.4 == cpu_temp.current_c
+    assert 110.0 == cpu_temp.high_c
+    assert 110.0 == cpu_temp.critical_c
 
     adc_temp: HwTemperature = temps[1]
     assert "rp1_adc" == adc_temp.name
-    assert 54.3 == adc_temp.current
-    assert None is adc_temp.high
-    assert None is adc_temp.critical
+    assert 54.3 == adc_temp.current_c
+    assert None is adc_temp.high_c
+    assert None is adc_temp.critical_c
 
     gpu_temp: HwTemperature = temps[2]
     assert "gpu" == gpu_temp.name
-    assert 51.0 == gpu_temp.current
-    assert None is gpu_temp.high
-    assert None is gpu_temp.critical
+    assert 51.0 == gpu_temp.current_c
+    assert None is gpu_temp.high_c
+    assert None is gpu_temp.critical_c

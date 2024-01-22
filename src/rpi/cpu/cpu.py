@@ -25,9 +25,9 @@ def read_load_average() -> LoadAverage:
 
     return LoadAverage(
         cpu_cores=cpu_cores,
-        last_minute=__round_percent(load_avg_percent[0]),
-        last_five_minutes=__round_percent(load_avg_percent[1]),
-        last_fifteen_minutes=__round_percent(load_avg_percent[2]),
+        load_1min_pct=__round_percent(load_avg_percent[0]),
+        load_5min_pct=__round_percent(load_avg_percent[1]),
+        load_15min_pct=__round_percent(load_avg_percent[2]),
     )
 
 

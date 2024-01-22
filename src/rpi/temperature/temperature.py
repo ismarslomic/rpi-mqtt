@@ -32,9 +32,9 @@ def __read_temperatures() -> list[HwTemperature]:
             hw_temperatures.append(
                 HwTemperature(
                     name=temp_measurement.label or temp_name,
-                    current=__round_temp(temp_measurement.current),
-                    high=temp_measurement.high,
-                    critical=temp_measurement.critical,
+                    current_c=__round_temp(temp_measurement.current),
+                    high_c=temp_measurement.high,
+                    critical_c=temp_measurement.critical,
                 )
             )
 
@@ -53,9 +53,9 @@ def __read_gpu_temperature() -> HwTemperature:
 
     # result.stdout: temp=51.0'C
     temp_str: str = result.stdout.replace("\n", "").replace("temp=", "").replace("'C", "")
-    temp_rounded: float = __round_temp(temp=float(temp_str))
+    temp_rounded_c: float = __round_temp(temp=float(temp_str))
 
-    return HwTemperature(name="gpu", current=temp_rounded, high=None, critical=None)
+    return HwTemperature(name="gpu", current_c=temp_rounded_c, high_c=None, critical_c=None)
 
 
 def __round_temp(temp: float) -> float:

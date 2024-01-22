@@ -14,9 +14,9 @@ def read_memory_use() -> MemoryUse:
     memory: namedtuple = psutil.virtual_memory()
 
     return MemoryUse(
-        total=__bytes_to_gibibytes(memory.total),
-        available=__bytes_to_gibibytes(memory.available),
-        used_percent=__round_percent(memory.percent),
+        total_gib=__bytes_to_gibibytes(memory.total),
+        available_gib=__bytes_to_gibibytes(memory.available),
+        used_pct=__round_percent(memory.percent),
     )
 
 

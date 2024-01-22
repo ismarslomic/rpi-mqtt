@@ -11,11 +11,11 @@ class LoadAverage:
     cpu_cores: int
     """The total number of (logical) CPU cores. Example: '4'"""
 
-    last_minute: float
+    load_1min_pct: float
     """Average system load over the last 1 minute, in percent. Example: '7.21'"""
 
-    last_five_minutes: float
+    load_5min_pct: float
     """Average system load over the last 5 minute, in percent. Example: '1.62'"""
 
-    last_fifteen_minutes: float
+    load_15min_pct: float
     """Average system load over the last 15 minute, in percent. Example: '0.52'"""

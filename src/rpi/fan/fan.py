@@ -17,6 +17,6 @@ def read_fans_speed() -> list[FanSpeed]:
 
     for fan_name, fan_measurements in fans.items():
         for fan_measurement in fan_measurements:
-            fans_speed.append(FanSpeed(name=fan_measurement.label or fan_name, speed=fan_measurement.current))
+            fans_speed.append(FanSpeed(name=fan_measurement.label or fan_name, speed_rpm=fan_measurement.current))
 
     return fans_speed

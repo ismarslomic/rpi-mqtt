@@ -30,6 +30,6 @@ def test_read_load_average():
 
     # Assert
     assert 4 == load_average.cpu_cores
-    assert 7.03 == load_average.last_minute
-    assert 1.93 == load_average.last_five_minutes
-    assert 0.62 == load_average.last_fifteen_minutes
+    assert 7.03 == load_average.load_1min_pct
+    assert 1.93 == load_average.load_5min_pct
+    assert 0.62 == load_average.load_15min_pct
