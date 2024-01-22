@@ -53,23 +53,20 @@ def test_read_wifi_connection_when_disconnected(mock_run):
     assert 0 == wifi_info.signal_strength_dbm
 
 
-def test_read_ethernet_mac_address_when_success():
-    # Mock file open reading mac address
-    mocked_mac_address = "a8:3a:dd:b1:cc:45"
-    with patch("rpi.network.network.open", new=mock_open(read_data=mocked_mac_address)):
-        # Call function
-        actual_mac_address = read_ethernet_mac_address()
+@patch("builtins.open", new_callable=mock_open, read_data="a8:3a:dd:b1:cc:45")
+def test_read_ethernet_mac_address_when_success(_):
+    # Call function
+    actual_mac_address = read_ethernet_mac_address()
 
     # Assert mac address returned
-    assert mocked_mac_address == actual_mac_address
+    assert "a8:3a:dd:b1:cc:45" == actual_mac_address
 
 
-def test_read_ethernet_mac_address_when_error():
-    # Mock file open reading mac address
-    with patch("rpi.network.network.open", side_effect=FileNotFoundError("File not found")):
-        # Call function
-        with pytest.raises(RuntimeError) as exec_info:
-            read_ethernet_mac_address()
+@patch("builtins.open", side_effect=FileNotFoundError("File not found"))
+def test_read_ethernet_mac_address_when_error2(_):
+    # Call function
+    with pytest.raises(RuntimeError) as exec_info:
+        read_ethernet_mac_address()
 
     # Assert error message
     assert "Failed to read mac address" in str(exec_info)

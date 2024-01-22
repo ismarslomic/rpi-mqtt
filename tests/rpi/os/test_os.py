@@ -49,9 +49,8 @@ SUPPORT_URL="https://www.debian.org/support"
 BUG_REPORT_URL="https://bugs.debian.org/\""""
 
 
-# noinspection PyUnusedLocal
 @patch("builtins.open", new_callable=mock_open, read_data=os_release_mock)
-def test_read_os_release(mock_file):
+def test_read_os_release(_):
     # Call function
     os_release: str = read_os_release()
 
