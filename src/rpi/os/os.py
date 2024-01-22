@@ -2,6 +2,9 @@
 """Service for reading the Rpi OS info"""
 
 import subprocess
+from datetime import datetime, timezone
+
+import psutil
 
 # Apt is not available on Mac
 APT_AVAILABLE = True
@@ -52,3 +55,15 @@ def read_number_of_available_updates() -> int:
 
     # apt not available
     return -1
+
+
+def read_rpi_boot_time() -> str:
+    """Return the Rpi boot time. Example: '2024-01-22T12:51:19+00:00'"""
+    boot_time_seconds: float = psutil.boot_time()
+
+    return __timestamp_to_iso_format(timestamp=boot_time_seconds)
+
+
+def __timestamp_to_iso_format(timestamp: float) -> str:
+    """Format timestamp (seconds since the epoch) as ISO 8601 formatted string, including timezone offset"""
+    return datetime.fromtimestamp(timestamp, timezone.utc).isoformat()

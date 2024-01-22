@@ -19,7 +19,7 @@ from rpi.memory.types import MemoryUse
 from rpi.model.model import read_rpi_model
 from rpi.network.network import read_ethernet_mac_address, read_hostname, read_ip, read_wifi_connection
 from rpi.network.types import WiFiConnectionInfo
-from rpi.os.os import read_number_of_available_updates, read_os_release, read_rpi_os_kernel
+from rpi.os.os import read_number_of_available_updates, read_os_release, read_rpi_boot_time, read_rpi_os_kernel
 from rpi.temperature.temperature import read_temperature
 from rpi.temperature.types import HwTemperature
 from rpi.throttle.throttle import read_throttle_status
@@ -37,6 +37,7 @@ class RpiMonitorSummary:
     eth_mac: str
     os_kernel: str
     os_release: str
+    booted_at: str
     avail_updates: int
     bootloader_ver: BootloaderVersion
     cpu_use_pct: float
@@ -70,6 +71,7 @@ monitor_summary = RpiMonitorSummary(
     eth_mac=read_ethernet_mac_address(),
     os_kernel=read_rpi_os_kernel(),
     os_release=read_os_release(),
+    booted_at=read_rpi_boot_time(),
     avail_updates=read_number_of_available_updates(),
     bootloader_ver=read_rpi_bootloader_version(),
     cpu_use_pct=read_cpu_use_percent(),

@@ -3,9 +3,10 @@
 
 from unittest.mock import MagicMock, mock_open, patch
 
+import psutil
 import pytest
 
-from rpi.os.os import read_os_release, read_rpi_os_kernel
+from rpi.os.os import read_os_release, read_rpi_boot_time, read_rpi_os_kernel
 
 
 @patch("rpi.os.os.subprocess.run")
@@ -56,3 +57,15 @@ def test_read_os_release(mock_file):
 
     # Assert
     assert "Debian GNU/Linux 12 (bookworm)" == os_release
+
+
+def test_read_rpi_boot_time():
+    # Mock psutil
+    psutil_mock: float = 1705927879.0
+    psutil.boot_time = MagicMock(return_value=psutil_mock)
+
+    # Call function
+    boot_time: str = read_rpi_boot_time()
+
+    # Assert boot time in ISO format
+    assert "2024-01-22T12:51:19+00:00" == boot_time
