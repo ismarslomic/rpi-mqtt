@@ -9,7 +9,7 @@ import subprocess
 from rpi.network.types import WiFiConnectionInfo
 
 
-def read_container_host_ip() -> str:
+def read_ip() -> str:
     """Read Rpi IP"""
 
     ip_pipe_file_name = "/proc/net/tcp"
@@ -18,7 +18,7 @@ def read_container_host_ip() -> str:
         return _parse_ip_from_tcp_content(tcp_content)
 
 
-def read_container_host_hostname() -> str:
+def read_hostname() -> str:
     """Read Rpi hostname"""
 
     host_name_file_name = "/etc/hostname"
