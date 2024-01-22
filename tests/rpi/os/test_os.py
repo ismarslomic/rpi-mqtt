@@ -11,7 +11,7 @@ from rpi.os.os import read_os_release, read_rpi_os_kernel
 @patch("rpi.os.os.subprocess.run")
 def test_read_rpi_os_kernel(mock_run):
     # Mock subprocess.run
-    uname_mock = "6.1.0-rpi7-rpi-2712 #1 SMP PREEMPT Debian 1:6.1.63-1+rpt1 (2023-11-24) aarch64"
+    uname_mock = "6.1.0-rpi7-rpi-2712 #1 SMP PREEMPT Debian 1:6.1.63-1+rpt1 (2023-11-24) aarch64\n"
     mock_proc = MagicMock(returncode=0, stdout=uname_mock)
     mock_run.return_value = mock_proc
 

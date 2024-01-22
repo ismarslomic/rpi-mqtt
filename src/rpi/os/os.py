@@ -22,7 +22,7 @@ def read_rpi_os_kernel() -> str:
     if result.returncode != 0:
         raise RuntimeError("Failed to read OS kernel version", result.stderr)
 
-    return result.stdout
+    return result.stdout.replace("\n", "")
 
 
 def read_os_release() -> str:
