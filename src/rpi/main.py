@@ -3,6 +3,7 @@
 
 import json
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from json import JSONEncoder
 
 from rpi.bootloader.bootloader import read_rpi_bootloader_version
@@ -29,6 +30,7 @@ from rpi.throttle.types import SystemThrottleStatus
 class RpiMonitorSummary:
     """Class representing summary of all Rpi monitor sensors"""
 
+    updated_at: str
     rpi_model: str
     ip: str
     host_name: str
@@ -54,7 +56,14 @@ class RpiMonitorSummaryEncoder(JSONEncoder):
         return o.__dict__
 
 
+def __date_time_now_utc() -> str:
+    """Return date time now as string, in UTC with timezone offset. Example: '2024-01-22T18:02:18+00:00'"""
+
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
 monitor_summary = RpiMonitorSummary(
+    updated_at=__date_time_now_utc(),
     rpi_model=read_rpi_model(),
     ip=read_ip(),
     host_name=read_hostname(),
