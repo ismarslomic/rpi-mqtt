@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Tests to verify the network readings of Rpi"""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, mock_open, patch
 
-from rpi.network.network import _parse_ip_from_tcp_content, read_wifi_connection
+import pytest
+
+from rpi.network.network import _parse_ip_from_tcp_content, read_ethernet_mac_address, read_wifi_connection
 from rpi.network.types import WiFiConnectionInfo
 
 
@@ -49,6 +51,28 @@ def test_read_wifi_connection_when_disconnected(mock_run):
     # Assert Wi-Fi information returned
     assert "" == wifi_info.ssid
     assert 0 == wifi_info.signal_strength_dbm
+
+
+def test_read_ethernet_mac_address_when_success():
+    # Mock file open reading mac address
+    mocked_mac_address = "a8:3a:dd:b1:cc:45"
+    with patch("rpi.network.network.open", new=mock_open(read_data=mocked_mac_address)):
+        # Call function
+        actual_mac_address = read_ethernet_mac_address()
+
+    # Assert mac address returned
+    assert mocked_mac_address == actual_mac_address
+
+
+def test_read_ethernet_mac_address_when_error():
+    # Mock file open reading mac address
+    with patch("rpi.network.network.open", side_effect=FileNotFoundError("File not found")):
+        # Call function
+        with pytest.raises(RuntimeError) as exec_info:
+            read_ethernet_mac_address()
+
+    # Assert error message
+    assert "Failed to read mac address" in str(exec_info)
 
 
 def test_parse_ip_from_tcp_content():

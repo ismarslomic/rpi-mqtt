@@ -16,7 +16,7 @@ from rpi.fan.types import FanSpeed
 from rpi.memory.memory import read_memory_use
 from rpi.memory.types import MemoryUse
 from rpi.model.model import read_rpi_model
-from rpi.network.network import read_hostname, read_ip, read_wifi_connection
+from rpi.network.network import read_ethernet_mac_address, read_hostname, read_ip, read_wifi_connection
 from rpi.network.types import WiFiConnectionInfo
 from rpi.os.os import read_number_of_available_updates, read_os_release, read_rpi_os_kernel
 from rpi.temperature.temperature import read_temperature
@@ -39,6 +39,7 @@ class RpiMonitorSummary:
     ip: str
     host_name: str
     wifi_connection_ip: WiFiConnectionInfo
+    mac_address: str
     os_kernel: str
     os_release: str
     number_of_available_updates: int
@@ -64,6 +65,7 @@ monitor_summary = RpiMonitorSummary(
     ip=read_ip(),
     host_name=read_hostname(),
     wifi_connection_ip=read_wifi_connection(),
+    mac_address=read_ethernet_mac_address(),
     os_kernel=read_rpi_os_kernel(),
     os_release=read_os_release(),
     number_of_available_updates=read_number_of_available_updates(),

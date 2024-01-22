@@ -13,19 +13,37 @@ def read_ip() -> str:
     """Read Rpi IP"""
 
     ip_pipe_file_name = "/proc/net/tcp"
-    with open(ip_pipe_file_name, "r", encoding="utf-8") as f:
-        tcp_content = f.read().strip("\x00")
-        return _parse_ip_from_tcp_content(tcp_content)
+
+    try:
+        with open(ip_pipe_file_name, "r", encoding="utf-8") as f:
+            tcp_content = f.read().strip("\x00")
+            return _parse_ip_from_tcp_content(tcp_content)
+    except Exception as err:
+        raise RuntimeError("Failed to read ip", err) from err
 
 
 def read_hostname() -> str:
     """Read Rpi hostname"""
 
     host_name_file_name = "/etc/hostname"
-    with open(host_name_file_name, "r", encoding="utf-8") as f:
-        host_name = f.readline().strip()
 
-    return host_name
+    try:
+        with open(host_name_file_name, "r", encoding="utf-8") as f:
+            return f.readline().strip()
+    except Exception as err:
+        raise RuntimeError("Failed to read host name", err) from err
+
+
+def read_ethernet_mac_address() -> str:
+    """Read the RPI mac address of the ethernet (eth0) network interface"""
+
+    mac_address_file_name = "/sys/class/net/eth0/address"
+
+    try:
+        with open(mac_address_file_name, "r", encoding="utf-8") as f:
+            return f.readline().strip()
+    except Exception as err:
+        raise RuntimeError("Failed to read mac address", err) from err
 
 
 def read_wifi_connection() -> WiFiConnectionInfo:
