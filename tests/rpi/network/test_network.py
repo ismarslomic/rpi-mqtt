@@ -87,3 +87,23 @@ def test_parse_ip_from_tcp_content():
     ip = _parse_ip_from_tcp_content(tcp_content)
 
     assert "192.168.1.141" == ip
+
+
+@pytest.mark.parametrize(
+    "strength, quality",
+    [
+        (-20, "Excellent"),
+        (-30, "Excellent"),
+        (-66, "Excellent"),
+        (-67, "Very good"),
+        (-69, "Very good"),
+        (-70, "Ok"),
+        (-79, "Ok"),
+        (-80, "Not good"),
+        (-89, "Not good"),
+        (-90, "Unusable"),
+        (-130, "Unusable"),
+    ],
+)
+def test_signal_strength_quality(strength: int, quality: str):
+    assert WiFiConnectionInfo(ssid="", signal_strength_dbm=strength).signal_strength_quality == quality
