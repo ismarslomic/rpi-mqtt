@@ -18,7 +18,25 @@ class WiFiConnectionInfo:
         self.signal_strength_quality = self.__signal_strength_quality()
 
     def __signal_strength_quality(self) -> str:
-        """Return human-readable quality of the Wi-Fi signal strength, example: Excellent|Very good|Unusable"""
+        """Return human-readable quality of the Wi-Fi signal strength.
+
+        -30 dBm
+            Excellent - Max achievable signal strength. Your device is most likely only a few feet from the AP to
+            achieve this signal. Neither a typical nor desirable in the real world.
+
+        -67 dBm
+            Very Good - Minimum signal strength for most business applications
+
+        -70 dBm
+            Okay - Minimum signal strength required for a decent packet delivery.
+
+        -80 dBm
+            Not Good - Minimum signal strength for basic connectivity. Packet delivery may be unreliable.
+
+        -90 dBm
+            Unusable - Approaching or drowning in the background transmissions (or noise floor) and is causing
+            serious interference with the signal. Any functionality is highly unlikely.
+        """
 
         if self.signal_strength_dbm >= -66:
             return "Excellent"
