@@ -8,11 +8,20 @@ from dataclasses import dataclass
 class WiFiConnectionInfo:
     """Class representing Wi-Fi information"""
 
+    status: str
+    """The Wi-Fi status, 'on' or 'off'"""
+
     ssid: str
     """The SSID of the Wi-Fi network. Example 'my-network'"""
 
     signal_strength_dbm: int
     """The signal strength of the Wi-Fi connection, in decibel-milliwatts (dBm). Example '-43'"""
+
+    freq_mhz: int
+    """The frequency of connected Wi-Fi network, in megahertz (MHz). Example '5520'"""
+
+    mac_address: str
+    """The mac address of the Wi-Fi (wlan0) network interface"""
 
     def __post_init__(self):
         self.signal_strength_quality = self.__signal_strength_quality()
@@ -38,6 +47,8 @@ class WiFiConnectionInfo:
             serious interference with the signal. Any functionality is highly unlikely.
         """
 
+        if self.status == "off":
+            return "N/A"
         if self.signal_strength_dbm >= -66:
             return "Excellent"
         if -67 >= self.signal_strength_dbm >= -69:

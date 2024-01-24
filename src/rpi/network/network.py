@@ -37,13 +37,13 @@ def read_hostname() -> str:
 def read_ethernet_mac_address() -> str:
     """Read the RPI mac address of the ethernet (eth0) network interface"""
 
-    mac_address_file_name = "/sys/class/net/eth0/address"
+    return __read_mac_address_for_interface("eth0")
 
-    try:
-        with open(mac_address_file_name, "r", encoding="utf-8") as f:
-            return f.readline().strip()
-    except Exception as err:
-        raise RuntimeError("Failed to read mac address", err) from err
+
+def read_wifi_mac_address() -> str:
+    """Read the RPI mac address of the Wi-Fi (wlan0) network interface"""
+
+    return __read_mac_address_for_interface("wlan0")
 
 
 def read_wifi_connection() -> WiFiConnectionInfo:
@@ -59,6 +59,9 @@ def read_wifi_connection() -> WiFiConnectionInfo:
     result_as_list = result.stdout.split("\n")
     ssid: str = ""
     signal: int = 0
+    freq: int = 0
+    status: str = "on"
+    mac_address: str = read_wifi_mac_address()
 
     for item in result_as_list:
         item_stripped = item.strip()
@@ -68,8 +71,28 @@ def read_wifi_connection() -> WiFiConnectionInfo:
         elif item_stripped.startswith("signal:"):
             item_split = item_stripped.split("signal: ")
             signal = int(item_split[1].replace("dBm", "").strip())
+        elif item_stripped.startswith("freq:"):
+            item_split = item_stripped.split("freq: ")
+            freq = int(item_split[1].strip())
 
-    return WiFiConnectionInfo(ssid=ssid, signal_strength_dbm=signal)
+    if result == "Not connected." or ssid == "":
+        status = "off"
+
+    return WiFiConnectionInfo(
+        status=status, ssid=ssid, signal_strength_dbm=signal, freq_mhz=freq, mac_address=mac_address
+    )
+
+
+def __read_mac_address_for_interface(interface: str) -> str:
+    """Read the RPI mac address for specific network interface"""
+
+    mac_address_file_name = f"/sys/class/net/{interface}/address"
+
+    try:
+        with open(mac_address_file_name, "r", encoding="utf-8") as f:
+            return f.readline().strip()
+    except Exception as err:
+        raise RuntimeError(f"Failed to read mac address for interface '{interface}'", err) from err
 
 
 def _parse_ip_from_tcp_content(content: str) -> str:

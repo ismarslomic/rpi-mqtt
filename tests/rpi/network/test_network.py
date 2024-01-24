@@ -5,13 +5,19 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from rpi.network.network import _parse_ip_from_tcp_content, read_ethernet_mac_address, read_wifi_connection
+from rpi.network.network import (
+    _parse_ip_from_tcp_content,
+    read_ethernet_mac_address,
+    read_wifi_connection,
+    read_wifi_mac_address,
+)
 from rpi.network.types import WiFiConnectionInfo
 
 
-# patching 'iw' command run by the subprocess.run
+# patching 'iw' command run by the subprocess.run and reading mac address for Wi-Fi interface
 @patch("rpi.network.network.subprocess.run")
-def test_read_wifi_connection_when_connected(mock_run):
+@patch("builtins.open", new_callable=mock_open, read_data="a9:3a:dd:b1:cc:46")
+def test_read_wifi_connection_when_connected(_, mock_run):
     # Mock subprocess.run running iw to read Wi-Fi connection
     iw_mock = (
         "Connected to 04:42:1a:cf:15:c8 (on wlan0)\n"
@@ -34,13 +40,17 @@ def test_read_wifi_connection_when_connected(mock_run):
     wifi_info: WiFiConnectionInfo = read_wifi_connection()
 
     # Assert Wi-Fi information returned
+    assert "on" == wifi_info.status
     assert "MyNetwork 5G-2" == wifi_info.ssid
     assert -43 == wifi_info.signal_strength_dbm
+    assert 5520 == wifi_info.freq_mhz
+    assert "a9:3a:dd:b1:cc:46" == wifi_info.mac_address
 
 
 # patching 'iw' command run by the subprocess.run
 @patch("rpi.network.network.subprocess.run")
-def test_read_wifi_connection_when_disconnected(mock_run):
+@patch("builtins.open", new_callable=mock_open, read_data="a9:3a:dd:b1:cc:46")
+def test_read_wifi_connection_when_disconnected(_, mock_run):
     # Mock subprocess.run running vcgencmd to read GPU temperature
     mock_proc = MagicMock(returncode=0, stdout="Not connected.")
     mock_run.return_value = mock_proc
@@ -49,8 +59,11 @@ def test_read_wifi_connection_when_disconnected(mock_run):
     wifi_info: WiFiConnectionInfo = read_wifi_connection()
 
     # Assert Wi-Fi information returned
+    assert "off" == wifi_info.status
     assert "" == wifi_info.ssid
     assert 0 == wifi_info.signal_strength_dbm
+    assert 0 == wifi_info.freq_mhz
+    assert "a9:3a:dd:b1:cc:46" == wifi_info.mac_address
 
 
 @patch("builtins.open", new_callable=mock_open, read_data="a8:3a:dd:b1:cc:45")
@@ -60,6 +73,15 @@ def test_read_ethernet_mac_address_when_success(_):
 
     # Assert mac address returned
     assert "a8:3a:dd:b1:cc:45" == actual_mac_address
+
+
+@patch("builtins.open", new_callable=mock_open, read_data="a9:3a:dd:b1:cc:46")
+def test_read_wifi_mac_address_when_success(_):
+    # Call function
+    actual_mac_address = read_wifi_mac_address()
+
+    # Assert mac address returned
+    assert "a9:3a:dd:b1:cc:46" == actual_mac_address
 
 
 @patch("builtins.open", side_effect=FileNotFoundError("File not found"))
@@ -105,5 +127,15 @@ def test_parse_ip_from_tcp_content():
         (-130, "Unusable"),
     ],
 )
-def test_signal_strength_quality(strength: int, quality: str):
-    assert WiFiConnectionInfo(ssid="", signal_strength_dbm=strength).signal_strength_quality == quality
+def test_signal_strength_quality_when_connected(strength: int, quality: str):
+    wifi_info = WiFiConnectionInfo(
+        status="on", ssid="MyWifi", signal_strength_dbm=strength, freq_mhz=5520, mac_address="a9:3a:dd:b1:cc:46"
+    )
+    assert wifi_info.signal_strength_quality == quality
+
+
+def test_signal_strength_quality_when_disconnected():
+    wifi_info = WiFiConnectionInfo(
+        status="off", ssid="", signal_strength_dbm=0, freq_mhz=0, mac_address="a9:3a:dd:b1:cc:46"
+    )
+    assert wifi_info.signal_strength_quality == "N/A"
