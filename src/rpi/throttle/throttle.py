@@ -26,10 +26,10 @@ def read_throttle_status() -> SystemThrottleStatus:
 
     status_decimal: int = __convert_hex_to_integer(status_hex)
     status_binary: str = bin(status_decimal)
-    throttled_reasons: list[str] = __to_human_readable(status_decimal)
+    throttled_reasons: str = __to_human_readable(status_decimal)
 
     return SystemThrottleStatus(
-        status_hex=status_hex, status_decimal=status_decimal, status_binary=status_binary, reasons=throttled_reasons
+        status_hex=status_hex, status_decimal=status_decimal, status_binary=status_binary, reason=throttled_reasons
     )
 
 
@@ -52,7 +52,7 @@ def __convert_hex_to_integer(hex_value: str) -> int:
     return int(hex_value, 0)
 
 
-def __to_human_readable(throttled_value: int) -> list[str]:
+def __to_human_readable(throttled_value: int) -> str:
     """Translates the throttled status expressed as integer to human-readable status"""
 
     # doc: https://blog.mccormack.tech/shell/2019/01/05/monitoring-raspberry-pi-power-and-thermal-issues.html
@@ -93,6 +93,7 @@ def __to_human_readable(throttled_value: int) -> list[str]:
             throttled_reasons.append(reason)
 
     if len(throttled_reasons) == 0:
-        return ["Not throttled"]
+        return "Not throttled"
 
-    return throttled_reasons
+    # Example: 'Under-voltage has occurred. Throttling has occurred'
+    return ". ".join(throttled_reasons)

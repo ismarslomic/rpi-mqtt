@@ -17,6 +17,6 @@ class SystemThrottleStatus:
     status_binary: str
     """Throttling status represented as binary value. Example: '0b1010000000000000000'"""
 
-    reasons: list[str]
-    """Human readable reasons for system throttling, if throttling has occurred.
-    Example: ['Under-voltage has occurred', 'Throttling has occurred']"""
+    reason: str
+    """Human readable reason for system throttling, if throttling has occurred.
+    Example: 'Under-voltage has occurred. Throttling has occurred'"""
