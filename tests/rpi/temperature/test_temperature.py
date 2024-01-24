@@ -27,25 +27,25 @@ def test_read_temperature(mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    temps: list[HwTemperature] = read_temperature()
+    temps: dict[str, HwTemperature] = read_temperature()
 
     # Assert 3 temperature readings
     assert 3 == len(temps)
 
-    cpu_temp: HwTemperature = temps[0]
-    assert "cpu_thermal" == cpu_temp.name
+    assert "cpu_thermal" in temps
+    cpu_temp: HwTemperature = temps["cpu_thermal"]
     assert 46.4 == cpu_temp.current_c
     assert 110.0 == cpu_temp.high_c
     assert 110.0 == cpu_temp.critical_c
 
-    adc_temp: HwTemperature = temps[1]
-    assert "rp1_adc" == adc_temp.name
+    assert "rp1_adc" in temps
+    adc_temp: HwTemperature = temps["rp1_adc"]
     assert 54.3 == adc_temp.current_c
     assert None is adc_temp.high_c
     assert None is adc_temp.critical_c
 
-    gpu_temp: HwTemperature = temps[2]
-    assert "gpu" == gpu_temp.name
+    assert "gpu" in temps
+    gpu_temp: HwTemperature = temps["gpu"]
     assert 51.0 == gpu_temp.current_c
     assert None is gpu_temp.high_c
     assert None is gpu_temp.critical_c

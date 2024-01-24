@@ -9,9 +9,6 @@ from typing import Optional
 class HwTemperature:
     """Class representing temperature reading for one specific hardware component"""
 
-    name: str
-    """Name of the hardware component temperature is measured for. Exampel: 'cpu_thermal'"""
-
     current_c: float
     """Current temperature for the hardware, in celsius. Example: '46.85'"""
 

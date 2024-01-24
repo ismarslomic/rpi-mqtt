@@ -9,18 +9,19 @@ import psutil
 from rpi.temperature.types import HwTemperature
 
 
-def read_temperature() -> list[HwTemperature]:
+def read_temperature() -> dict[str, HwTemperature]:
     """Read available temperatures for hardware components, such as for CPU and GPU"""
 
-    temps: list[HwTemperature] = __read_temperatures()
-    temps.append(__read_gpu_temperature())
+    temps: dict[str, HwTemperature] = __read_temperatures()
+    gpu_temp = __read_gpu_temperature()
+    temps["gpu"] = gpu_temp
 
     return temps
 
 
-def __read_temperatures() -> list[HwTemperature]:
+def __read_temperatures() -> dict[str, HwTemperature]:
     """Read available temperatures, such as for CPU and ADC using the psutil module"""
-    hw_temperatures: list[HwTemperature] = []
+    hw_temperatures: dict[str, HwTemperature] = {}
 
     # doc: https://psutil.readthedocs.io/en/latest/
     temps: defaultdict[str, list] = psutil.sensors_temperatures()
@@ -29,13 +30,11 @@ def __read_temperatures() -> list[HwTemperature]:
 
     for temp_name, temp_measurements in temps.items():
         for temp_measurement in temp_measurements:
-            hw_temperatures.append(
-                HwTemperature(
-                    name=temp_measurement.label or temp_name,
-                    current_c=__round_temp(temp_measurement.current),
-                    high_c=temp_measurement.high,
-                    critical_c=temp_measurement.critical,
-                )
+            name: str = temp_measurement.label or temp_name
+            hw_temperatures[name] = HwTemperature(
+                current_c=__round_temp(temp_measurement.current),
+                high_c=temp_measurement.high,
+                critical_c=temp_measurement.critical,
             )
 
     return hw_temperatures
@@ -55,7 +54,7 @@ def __read_gpu_temperature() -> HwTemperature:
     temp_str: str = result.stdout.replace("\n", "").replace("temp=", "").replace("'C", "")
     temp_rounded_c: float = __round_temp(temp=float(temp_str))
 
-    return HwTemperature(name="gpu", current_c=temp_rounded_c, high_c=None, critical_c=None)
+    return HwTemperature(current_c=temp_rounded_c, high_c=None, critical_c=None)
 
 
 def __round_temp(temp: float) -> float:
