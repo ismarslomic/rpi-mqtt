@@ -17,13 +17,15 @@ def test_read_fans_speed():
     psutil.sensors_fans = MagicMock(return_value=psutil_mock)
 
     # Call function
-    fans_speed: list[FanSpeed] = read_fans_speed()
+    fans_speed: dict[str, FanSpeed] = read_fans_speed()
 
     # Assert 1 fan speed reading
     assert 1 == len(fans_speed)
 
-    assert "pwmfan" == fans_speed[0].name
-    assert 2998 == fans_speed[0].speed_rpm
+    assert "pwmfan" in fans_speed
+    assert 2998 == fans_speed["pwmfan"].curr_speed_rpm
+    assert 8000 == fans_speed["pwmfan"].max_speed_rpm
+    assert 37.48 == fans_speed["pwmfan"].curr_speed_pct
 
 
 def test_read_fans_when_no_fans():
@@ -32,7 +34,7 @@ def test_read_fans_when_no_fans():
     psutil.sensors_fans = MagicMock(return_value=psutil_mock)
 
     # Call function
-    fans_speed: list[FanSpeed] = read_fans_speed()
+    fans_speed: dict[str, FanSpeed] = read_fans_speed()
 
     # Assert 0 fan speed reading
     assert 0 == len(fans_speed)

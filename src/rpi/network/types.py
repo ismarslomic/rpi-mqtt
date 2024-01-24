@@ -20,7 +20,7 @@ class WiFiConnectionInfo:
     freq_mhz: int
     """The frequency of connected Wi-Fi network, in megahertz (MHz). Example '5520'"""
 
-    mac_address: str
+    mac_addr: str
     """The mac address of the Wi-Fi (wlan0) network interface"""
 
     def __post_init__(self):

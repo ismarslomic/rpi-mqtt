@@ -34,7 +34,7 @@ class RpiMonitorSummary:
     rpi_model: str
     ip: str
     host_name: str
-    eth_mac: str
+    eth_mac_addr: str
     os_kernel: str
     os_release: str
     booted_at: str
@@ -44,7 +44,7 @@ class RpiMonitorSummary:
     cpu_load_average: LoadAverage
     disk_usage: DiskUse
     memory_usage: MemoryUse
-    fan_spead: list[FanSpeed]
+    fan_spead: dict[str, FanSpeed]
     wifi: WiFiConnectionInfo
     temperature: list[HwTemperature]
     throttle: SystemThrottleStatus
@@ -68,7 +68,7 @@ monitor_summary = RpiMonitorSummary(
     rpi_model=read_rpi_model(),
     ip=read_ip(),
     host_name=read_hostname(),
-    eth_mac=read_ethernet_mac_address(),
+    eth_mac_addr=read_ethernet_mac_address(),
     os_kernel=read_rpi_os_kernel(),
     os_release=read_os_release(),
     booted_at=read_rpi_boot_time(),

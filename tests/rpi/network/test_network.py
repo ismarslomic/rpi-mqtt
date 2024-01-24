@@ -44,7 +44,7 @@ def test_read_wifi_connection_when_connected(_, mock_run):
     assert "MyNetwork 5G-2" == wifi_info.ssid
     assert -43 == wifi_info.signal_strength_dbm
     assert 5520 == wifi_info.freq_mhz
-    assert "a9:3a:dd:b1:cc:46" == wifi_info.mac_address
+    assert "a9:3a:dd:b1:cc:46" == wifi_info.mac_addr
 
 
 # patching 'iw' command run by the subprocess.run
@@ -63,7 +63,7 @@ def test_read_wifi_connection_when_disconnected(_, mock_run):
     assert "" == wifi_info.ssid
     assert 0 == wifi_info.signal_strength_dbm
     assert 0 == wifi_info.freq_mhz
-    assert "a9:3a:dd:b1:cc:46" == wifi_info.mac_address
+    assert "a9:3a:dd:b1:cc:46" == wifi_info.mac_addr
 
 
 @patch("builtins.open", new_callable=mock_open, read_data="a8:3a:dd:b1:cc:45")
@@ -129,13 +129,13 @@ def test_parse_ip_from_tcp_content():
 )
 def test_signal_strength_quality_when_connected(strength: int, quality: str):
     wifi_info = WiFiConnectionInfo(
-        status="on", ssid="MyWifi", signal_strength_dbm=strength, freq_mhz=5520, mac_address="a9:3a:dd:b1:cc:46"
+        status="on", ssid="MyWifi", signal_strength_dbm=strength, freq_mhz=5520, mac_addr="a9:3a:dd:b1:cc:46"
     )
     assert wifi_info.signal_strength_quality == quality
 
 
 def test_signal_strength_quality_when_disconnected():
     wifi_info = WiFiConnectionInfo(
-        status="off", ssid="", signal_strength_dbm=0, freq_mhz=0, mac_address="a9:3a:dd:b1:cc:46"
+        status="off", ssid="", signal_strength_dbm=0, freq_mhz=0, mac_addr="a9:3a:dd:b1:cc:46"
     )
     assert wifi_info.signal_strength_quality == "N/A"

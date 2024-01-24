@@ -78,9 +78,7 @@ def read_wifi_connection() -> WiFiConnectionInfo:
     if result == "Not connected." or ssid == "":
         status = "off"
 
-    return WiFiConnectionInfo(
-        status=status, ssid=ssid, signal_strength_dbm=signal, freq_mhz=freq, mac_address=mac_address
-    )
+    return WiFiConnectionInfo(status=status, ssid=ssid, signal_strength_dbm=signal, freq_mhz=freq, mac_addr=mac_address)
 
 
 def __read_mac_address_for_interface(interface: str) -> str:
