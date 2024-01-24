@@ -30,7 +30,7 @@ from rpi.throttle.types import SystemThrottleStatus
 class RpiMonitorSummary:
     """Class representing summary of all Rpi monitor sensors"""
 
-    updated_at: str
+    sensors_updated_at: str
     rpi_model: str
     ip: str
     host_name: str
@@ -45,9 +45,9 @@ class RpiMonitorSummary:
     disk_usage: DiskUse
     memory_usage: MemoryUse
     fan_spead: list[FanSpeed]
-    wifi_connection_ip: WiFiConnectionInfo
+    wifi: WiFiConnectionInfo
     temperature: list[HwTemperature]
-    throttle_status: SystemThrottleStatus
+    throttle: SystemThrottleStatus
 
 
 class RpiMonitorSummaryEncoder(JSONEncoder):
@@ -64,7 +64,7 @@ def __date_time_now_utc() -> str:
 
 
 monitor_summary = RpiMonitorSummary(
-    updated_at=__date_time_now_utc(),
+    sensors_updated_at=__date_time_now_utc(),
     rpi_model=read_rpi_model(),
     ip=read_ip(),
     host_name=read_hostname(),
@@ -79,9 +79,9 @@ monitor_summary = RpiMonitorSummary(
     disk_usage=read_disk_use(),
     memory_usage=read_memory_use(),
     fan_spead=read_fans_speed(),
-    wifi_connection_ip=read_wifi_connection(),
+    wifi=read_wifi_connection(),
     temperature=read_temperature(),
-    throttle_status=read_throttle_status(),
+    throttle=read_throttle_status(),
 )
 
 all_sensors_json_data = json.dumps(monitor_summary, indent=4, cls=RpiMonitorSummaryEncoder)
