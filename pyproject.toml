@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{ include = "mqtt", from = "src" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.9"
 psutil = "5.9.8"
 
 [tool.poetry.group.dev.dependencies]
