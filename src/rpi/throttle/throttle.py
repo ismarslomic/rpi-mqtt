@@ -2,6 +2,7 @@
 """Service for reading the system thermal throttling of Rpi"""
 
 import subprocess
+from typing import Union
 
 from rpi.throttle.types import SystemThrottleStatus
 
@@ -33,7 +34,7 @@ def read_throttle_status() -> SystemThrottleStatus:
     )
 
 
-def __get_status_as_hex(raw: str) -> str | None:
+def __get_status_as_hex(raw: str) -> Union[str, None]:
     """Returns the throttled value from string, example raw='throttled=0x0', returns '0x0'. Returns None if raw is
     not in this format"""
 
