@@ -25,13 +25,13 @@ def read_rpi_bootloader_version() -> BootloaderVersion:
 
     for item in result_as_list:
         item_stripped = item.strip()
-        if item_stripped.startswith("BOOTLOADER:"):
+        if update_status == "" and item_stripped.startswith("BOOTLOADER:"):
             item_split = item_stripped.split("BOOTLOADER: ")
             update_status = item_split[1].strip()
-        elif item_stripped.startswith("CURRENT:"):
+        elif current_version == "" and item_stripped.startswith("CURRENT:"):
             item_split = item_stripped.split("CURRENT: ")
             current_version = __timestamp_to_iso_format(item_split[1].strip())
-        elif item_stripped.startswith("LATEST:"):
+        elif latest_version == "" and item_stripped.startswith("LATEST:"):
             item_split = item_stripped.split("LATEST: ")
             latest_version = __timestamp_to_iso_format(item_split[1].strip())
 
