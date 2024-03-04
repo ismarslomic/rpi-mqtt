@@ -1,0 +1,23 @@
+mqtt:
+  # Foo bar comment
+  hostname: 192.168.0.1
+  port: 1337
+  client_id: foo-bar-client-id
+  authentication:
+    username: foo_username
+    password: bar_password
+  tls:
+    ca_certs: /my/path/to/ca_certs
+    certfile: /my/path/to/certfile
+    keyfile: /my/path/to/keyfile
+
+script:
+  update_interval: 120
+
+# Override only few of default properties
+sensors:
+  boot_loader: false
+  cpu: False
+  disk: false
+  memory: false
+  network: True
