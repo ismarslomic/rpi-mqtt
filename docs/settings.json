@@ -1,0 +1,225 @@
+{
+  "$defs": {
+    "MqttAuthentication": {
+      "description": "Settings for MQTT authentication",
+      "properties": {
+        "username": {
+          "description": "The MQTT authentication username",
+          "title": "Username",
+          "type": "string"
+        },
+        "password": {
+          "description": "The MQTT authentication password",
+          "title": "Password",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username",
+        "password"
+      ],
+      "title": "MqttAuthentication",
+      "type": "object"
+    },
+    "MqttSettings": {
+      "description": "Settings for the MQTT broker connection",
+      "properties": {
+        "hostname": {
+          "default": "127.0.0.1",
+          "description": "The hostname or IP address of the MQTT broker to connect to",
+          "title": "Hostname",
+          "type": "string"
+        },
+        "port": {
+          "default": 1883,
+          "description": "The TCP port the MQTT broker is listening on",
+          "title": "Port",
+          "type": "integer"
+        },
+        "client_id": {
+          "default": "rpi-mqtt",
+          "description": "The ID of this python program to use when connecting to the MQTT broker",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "authentication": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MqttAuthentication"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The MQTT broker authentication credentials, if required by the broker"
+        },
+        "tls": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MqttTlsSettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The TLS for encrypted connection to the MQTT broker, if supporter by broker"
+        }
+      },
+      "title": "MqttSettings",
+      "type": "object"
+    },
+    "MqttTlsSettings": {
+      "description": "Settings for MQTT TLS",
+      "properties": {
+        "ca_certs": {
+          "description": "Path to the CA Certificate file to verify host",
+          "title": "Ca Certs",
+          "type": "string"
+        },
+        "certfile": {
+          "description": "Path to the PEM encoded client certificate",
+          "title": "Certfile",
+          "type": "string"
+        },
+        "keyfile": {
+          "description": "Path to the PEM encoded private key",
+          "title": "Keyfile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ca_certs",
+        "certfile",
+        "keyfile"
+      ],
+      "title": "MqttTlsSettings",
+      "type": "object"
+    },
+    "ScriptSettings": {
+      "description": "General settings for this python script",
+      "properties": {
+        "update_interval": {
+          "default": 60,
+          "description": "The interval to update sensor data to the MQTT broker",
+          "title": "Update Interval",
+          "type": "integer"
+        }
+      },
+      "title": "ScriptSettings",
+      "type": "object"
+    },
+    "SensorsMonitoringSettings": {
+      "description": "Settings for monitoring sensors",
+      "properties": {
+        "boot_loader": {
+          "default": true,
+          "description": "Enable monitoring of the boot loader",
+          "title": "Boot Loader",
+          "type": "boolean"
+        },
+        "cpu": {
+          "default": true,
+          "description": "Enable monitoring of the CPU",
+          "title": "Cpu",
+          "type": "boolean"
+        },
+        "disk": {
+          "default": true,
+          "description": "Enable monitoring of the disk",
+          "title": "Disk",
+          "type": "boolean"
+        },
+        "fan": {
+          "default": true,
+          "description": "Enable monitoring of the fan",
+          "title": "Fan",
+          "type": "boolean"
+        },
+        "memory": {
+          "default": true,
+          "description": "Enable monitoring of the memory",
+          "title": "Memory",
+          "type": "boolean"
+        },
+        "network": {
+          "default": true,
+          "description": "Enable monitoring of the network",
+          "title": "Network",
+          "type": "boolean"
+        },
+        "os": {
+          "default": true,
+          "description": "Enable monitoring of the os",
+          "title": "Os",
+          "type": "boolean"
+        },
+        "temperature": {
+          "default": true,
+          "description": "Enable monitoring of the temperatures",
+          "title": "Temperature",
+          "type": "boolean"
+        },
+        "throttle": {
+          "default": true,
+          "description": "Enable monitoring of the throttling",
+          "title": "Throttle",
+          "type": "boolean"
+        }
+      },
+      "title": "SensorsMonitoringSettings",
+      "type": "object"
+    }
+  },
+  "description": "Model/schema for settings of rpi-mqtt",
+  "properties": {
+    "mqtt": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/MqttSettings"
+        }
+      ],
+      "default": {
+        "hostname": "127.0.0.1",
+        "port": 1883,
+        "client_id": "rpi-mqtt",
+        "authentication": null,
+        "tls": null
+      },
+      "description": "Settings for the MQTT broker connection"
+    },
+    "script": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScriptSettings"
+        }
+      ],
+      "default": {
+        "update_interval": 60
+      },
+      "description": "General settings for this python script"
+    },
+    "sensors": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SensorsMonitoringSettings"
+        }
+      ],
+      "default": {
+        "boot_loader": true,
+        "cpu": true,
+        "disk": true,
+        "fan": true,
+        "memory": true,
+        "network": true,
+        "os": true,
+        "temperature": true,
+        "throttle": true
+      },
+      "description": "Settings for monitoring sensors"
+    }
+  },
+  "title": "Settings",
+  "type": "object"
+}
