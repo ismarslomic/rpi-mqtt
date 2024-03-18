@@ -4,7 +4,7 @@
 
 - `mqtt.pub` - utilities for publishing Rpi sensors to MQTT topics
 - `mqtt.sub` - utilities for subscribing to MQTT topics
-- `rpi` - utilities for reading Rpi sensors
+- `sensors` - modules to read Rpi sensor data
 
 ## Installation
 ```bash
@@ -27,7 +27,7 @@ poetry install --without dev --no-root
 
 # Run python program
 cd src
-python3 -m rpi.main
+python3 -m sensors.main
 ```
 
 
