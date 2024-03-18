@@ -5,6 +5,16 @@ import subprocess
 from typing import Union
 
 from rpi.throttle.types import SystemThrottleStatus
+from rpi.types import RpiSensor, SensorNotAvailableException
+
+
+class ThrottledSensor(RpiSensor):
+    """Sensor for thermal throttling"""
+
+    name: str = "Throttled"
+
+    def read(self) -> SystemThrottleStatus:
+        return read_throttle_status()
 
 
 def read_throttle_status() -> SystemThrottleStatus:
@@ -13,9 +23,13 @@ def read_throttle_status() -> SystemThrottleStatus:
     # doc: https://www.raspberrypi.com/documentation/computers/os.html#get_throttled
 
     args = ["vcgencmd", "get_throttled"]
-    result = subprocess.run(args, capture_output=True, text=True, check=False)
+    try:
+        result = subprocess.run(args, capture_output=True, text=True, check=False)
+    except FileNotFoundError as err2:
+        raise SensorNotAvailableException("vcgencmd not available for this Rpi") from err2
+
     if result.returncode != 0:
-        raise RuntimeError("Failed to read throttled state", result.stderr)
+        raise SensorNotAvailableException("Failed to read throttled state", result.stderr)
 
     # result.stdout: throttled=0x0
     throttle_status_raw: str = result.stdout.strip()
@@ -23,7 +37,7 @@ def read_throttle_status() -> SystemThrottleStatus:
     status_hex: str | None = __get_status_as_hex(throttle_status_raw)
 
     if status_hex is None:
-        raise RuntimeError(f"Bad response from vcgencmd get_throttled: '{throttle_status_raw}'")
+        raise SensorNotAvailableException(f"Bad response from vcgencmd get_throttled: '{throttle_status_raw}'")
 
     status_decimal: int = __convert_hex_to_integer(status_hex)
     status_binary: str = bin(status_decimal)

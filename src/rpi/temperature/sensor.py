@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Service for reading the Rpi temperatures (i.e for CPU and GPU) by running linux commands"""
+"""Service for reading the Rpi temperatures (i.e. for CPU and GPU) by running linux commands"""
 
 import subprocess
 from collections import defaultdict
@@ -7,6 +7,17 @@ from collections import defaultdict
 import psutil
 
 from rpi.temperature.types import HwTemperature
+from rpi.types import RpiSensor, SensorNotAvailableException
+from rpi.utils import round_temp
+
+
+class TemperatureSensor(RpiSensor):
+    """Sensor for temperature"""
+
+    name: str = "Temperature"
+
+    def read(self) -> dict[str, HwTemperature]:
+        return read_temperature()
 
 
 def read_temperature() -> dict[str, HwTemperature]:
@@ -24,15 +35,19 @@ def __read_temperatures() -> dict[str, HwTemperature]:
     hw_temperatures: dict[str, HwTemperature] = {}
 
     # doc: https://psutil.readthedocs.io/en/latest/
+    if not hasattr(psutil, "sensors_temperatures"):
+        raise SensorNotAvailableException("sensors_temperatures() not available for this Rpi")
+
     temps: defaultdict[str, list] = psutil.sensors_temperatures()
+
     if not temps:
-        return hw_temperatures
+        raise SensorNotAvailableException("none temperatures detected for this Rpi")
 
     for temp_name, temp_measurements in temps.items():
         for temp_measurement in temp_measurements:
             name: str = temp_measurement.label or temp_name
             hw_temperatures[name] = HwTemperature(
-                current_c=__round_temp(temp_measurement.current),
+                current_c=round_temp(temp_measurement.current),
                 high_c=temp_measurement.high,
                 critical_c=temp_measurement.critical,
             )
@@ -45,19 +60,16 @@ def __read_gpu_temperature() -> HwTemperature:
 
     # doc: https://www.raspberrypi.com/documentation/computers/os.html#vcgencmd
     args = ["vcgencmd", "measure_temp"]
-    result = subprocess.run(args, capture_output=True, text=True, check=False)
+    try:
+        result = subprocess.run(args, capture_output=True, text=True, check=False)
+    except FileNotFoundError as err:
+        raise SensorNotAvailableException("vcgencmd not available for this Rpi") from err
 
     if result.returncode != 0:
-        raise RuntimeError("Failed to read GPU temperature", result.stderr)
+        raise SensorNotAvailableException("Failed to read GPU temperature", result.stderr)
 
     # result.stdout: temp=51.0'C
     temp_str: str = result.stdout.replace("\n", "").replace("temp=", "").replace("'C", "")
-    temp_rounded_c: float = __round_temp(temp=float(temp_str))
+    temp_rounded_c: float = round_temp(temp=float(temp_str))
 
     return HwTemperature(current_c=temp_rounded_c, high_c=None, critical_c=None)
-
-
-def __round_temp(temp: float) -> float:
-    """Round temp value to 1 decimal"""
-
-    return round(temp, 1)

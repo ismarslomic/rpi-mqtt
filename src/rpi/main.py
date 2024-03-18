@@ -6,24 +6,25 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from json import JSONEncoder
 
-from rpi.bootloader.bootloader import read_rpi_bootloader_version
+from rpi.bootloader.sensor import read_rpi_bootloader_version
 from rpi.bootloader.types import BootloaderVersion
-from rpi.cpu.cpu import read_cpu_use_percent, read_load_average
+from rpi.cpu.sensor import read_cpu_use_percent, read_load_average
 from rpi.cpu.types import LoadAverage
-from rpi.disk.disk import read_disk_use
+from rpi.disk.sensor import read_disk_use
 from rpi.disk.types import DiskUse
-from rpi.fan.fan import read_fans_speed
+from rpi.fan.sensor import read_fans_speed
 from rpi.fan.types import FanSpeed
-from rpi.memory.memory import read_memory_use
+from rpi.memory.sensor import read_memory_use
 from rpi.memory.types import MemoryUse
-from rpi.model.model import read_rpi_model
-from rpi.network.network import read_ethernet_mac_address, read_hostname, read_ip, read_wifi_connection
+from rpi.model.sensor import read_rpi_model
+from rpi.network.sensor import read_ethernet_mac_address, read_hostname, read_ip, read_wifi_connection
 from rpi.network.types import WiFiConnectionInfo
-from rpi.os.os import read_number_of_available_updates, read_os_release, read_rpi_boot_time, read_rpi_os_kernel
-from rpi.temperature.temperature import read_temperature
+from rpi.os.sensor import read_number_of_available_updates, read_os_release, read_rpi_boot_time, read_rpi_os_kernel
+from rpi.temperature.sensor import read_temperature
 from rpi.temperature.types import HwTemperature
-from rpi.throttle.throttle import read_throttle_status
+from rpi.throttle.sensor import ThrottledSensor, read_throttle_status
 from rpi.throttle.types import SystemThrottleStatus
+from rpi.types import RpiSensor
 
 
 @dataclass
@@ -46,7 +47,7 @@ class RpiMonitorSummary:
     memory_usage: MemoryUse
     fan_spead: dict[str, FanSpeed]
     wifi: WiFiConnectionInfo
-    temperature: list[HwTemperature]
+    temperature: dict[str, HwTemperature]
     throttle: SystemThrottleStatus
 
 
@@ -63,26 +64,46 @@ def __date_time_now_utc() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
-monitor_summary = RpiMonitorSummary(
-    sensors_updated_at=__date_time_now_utc(),
-    rpi_model=read_rpi_model(),
-    ip=read_ip(),
-    host_name=read_hostname(),
-    eth_mac_addr=read_ethernet_mac_address(),
-    os_kernel=read_rpi_os_kernel(),
-    os_release=read_os_release(),
-    booted_at=read_rpi_boot_time(),
-    avail_updates=read_number_of_available_updates(),
-    bootloader_ver=read_rpi_bootloader_version(),
-    cpu_use_pct=read_cpu_use_percent(),
-    cpu_load_average=read_load_average(),
-    disk_usage=read_disk_use(),
-    memory_usage=read_memory_use(),
-    fan_spead=read_fans_speed(),
-    wifi=read_wifi_connection(),
-    temperature=read_temperature(),
-    throttle=read_throttle_status(),
-)
+def read_sensors() -> RpiMonitorSummary:
+    """Read all sensors and return a summary"""
 
-all_sensors_json_data = json.dumps(monitor_summary, indent=4, cls=RpiMonitorSummaryEncoder)
-print(all_sensors_json_data)
+    return RpiMonitorSummary(
+        sensors_updated_at=__date_time_now_utc(),
+        rpi_model=read_rpi_model(),
+        ip=read_ip(),
+        host_name=read_hostname(),
+        eth_mac_addr=read_ethernet_mac_address(),
+        os_kernel=read_rpi_os_kernel(),
+        os_release=read_os_release(),
+        booted_at=read_rpi_boot_time(),
+        avail_updates=read_number_of_available_updates(),
+        bootloader_ver=read_rpi_bootloader_version(),
+        cpu_use_pct=read_cpu_use_percent(),
+        cpu_load_average=read_load_average(),
+        disk_usage=read_disk_use(),
+        memory_usage=read_memory_use(),
+        fan_spead=read_fans_speed(),
+        wifi=read_wifi_connection(),
+        temperature=read_temperature(),
+        throttle=read_throttle_status(),
+    )
+
+
+def print_sensors() -> None:
+    """Print sensors summary as json"""
+
+    all_sensors_json_data = json.dumps(read_sensors(), indent=4, cls=RpiMonitorSummaryEncoder)
+    print(all_sensors_json_data)
+
+
+def check_sensor_availability():
+    """Print sensor availability"""
+
+    sensor: RpiSensor = ThrottledSensor()
+    print("name:" + sensor.name)
+    print("available:" + str(sensor.available()))
+    # print(sensor.read())
+
+
+if __name__ == "__main__":
+    check_sensor_availability()

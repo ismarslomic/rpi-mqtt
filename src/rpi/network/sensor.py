@@ -7,6 +7,52 @@ import struct
 import subprocess
 
 from rpi.network.types import WiFiConnectionInfo
+from rpi.types import RpiSensor, SensorNotAvailableException
+
+
+class IpAddressSensor(RpiSensor):
+    """Sensor for IP address"""
+
+    name: str = "Ip address"
+
+    def read(self) -> str:
+        return read_ip()
+
+
+class HostnameSensor(RpiSensor):
+    """Sensor for hostname"""
+
+    name: str = "Hostname"
+
+    def read(self) -> str:
+        return read_hostname()
+
+
+class EthernetMacAddressSensor(RpiSensor):
+    """Sensor for Ethernet Mac address"""
+
+    name: str = "Ethernet mac address"
+
+    def read(self) -> str:
+        return read_ethernet_mac_address()
+
+
+class WifiMacAddressSensor(RpiSensor):
+    """Sensor for Wi-Fi Mac address"""
+
+    name: str = "Wifi mac address"
+
+    def read(self) -> str:
+        return read_wifi_mac_address()
+
+
+class WifiConnectionSensor(RpiSensor):
+    """Sensor for Wi-Fi connection"""
+
+    name: str = "Wifi connection"
+
+    def read(self) -> WiFiConnectionInfo:
+        return read_wifi_connection()
 
 
 def read_ip() -> str:
@@ -19,7 +65,7 @@ def read_ip() -> str:
             tcp_content = f.read().strip("\x00")
             return _parse_ip_from_tcp_content(tcp_content)
     except Exception as err:
-        raise RuntimeError("Failed to read ip", err) from err
+        raise SensorNotAvailableException("ip address file not available for this Rpi", err) from err
 
 
 def read_hostname() -> str:
@@ -31,7 +77,7 @@ def read_hostname() -> str:
         with open(host_name_file_name, "r", encoding="utf-8") as f:
             return f.readline().strip()
     except Exception as err:
-        raise RuntimeError("Failed to read host name", err) from err
+        raise SensorNotAvailableException("hostname file not available for this Rpi", err) from err
 
 
 def read_ethernet_mac_address() -> str:
@@ -51,10 +97,14 @@ def read_wifi_connection() -> WiFiConnectionInfo:
 
     # doc: https://wireless.wiki.kernel.org/en/users/Documentation/iw
     args = ["iw", "wlan0", "link"]
-    result = subprocess.run(args, capture_output=True, text=True, check=False)
+
+    try:
+        result = subprocess.run(args, capture_output=True, text=True, check=False)
+    except FileNotFoundError as err:
+        raise SensorNotAvailableException("Wi-Fi connection info not available for this Rpi") from err
 
     if result.returncode != 0:
-        raise RuntimeError("Failed to read Wi-Fi connection", result.stderr)
+        raise SensorNotAvailableException("Failed to read Wi-Fi connection", result.stderr)
 
     result_as_list = result.stdout.split("\n")
     ssid: str = ""
@@ -90,7 +140,7 @@ def __read_mac_address_for_interface(interface: str) -> str:
         with open(mac_address_file_name, "r", encoding="utf-8") as f:
             return f.readline().strip()
     except Exception as err:
-        raise RuntimeError(f"Failed to read mac address for interface '{interface}'", err) from err
+        raise SensorNotAvailableException(f"Failed to read mac address for interface '{interface}'", err) from err
 
 
 def _parse_ip_from_tcp_content(content: str) -> str:

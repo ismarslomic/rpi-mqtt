@@ -2,9 +2,19 @@
 """Service for reading the Rpi bootloader version"""
 
 import subprocess
-from datetime import datetime, timezone
 
 from rpi.bootloader.types import BootloaderVersion
+from rpi.types import RpiSensor, SensorNotAvailableException
+from rpi.utils import date_and_timestamp_to_iso_datetime
+
+
+class BootloaderSensor(RpiSensor):
+    """Sensor for bootloader version"""
+
+    name: str = "Bootloader version"
+
+    def read(self) -> BootloaderVersion:
+        return read_rpi_bootloader_version()
 
 
 def read_rpi_bootloader_version() -> BootloaderVersion:
@@ -12,10 +22,14 @@ def read_rpi_bootloader_version() -> BootloaderVersion:
 
     # doc: https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#updating-the-eeprom-configuration
     args = ["rpi-eeprom-update"]
-    result = subprocess.run(args, capture_output=True, text=True, check=False)
+
+    try:
+        result = subprocess.run(args, capture_output=True, text=True, check=False)
+    except FileNotFoundError as err:
+        raise SensorNotAvailableException("rpi-eeprom-update not available for this Rpi") from err
 
     if result.returncode != 0:
-        raise RuntimeError("Failed to read Rpi bootloader version", result.stderr)
+        raise SensorNotAvailableException("Failed to read Rpi bootloader version", result.stderr)
 
     result_as_list = result.stdout.split("\n")
 
@@ -30,17 +44,9 @@ def read_rpi_bootloader_version() -> BootloaderVersion:
             update_status = item_split[1].strip()
         elif current_version == "" and item_stripped.startswith("CURRENT:"):
             item_split = item_stripped.split("CURRENT: ")
-            current_version = __timestamp_to_iso_format(item_split[1].strip())
+            current_version = date_and_timestamp_to_iso_datetime(item_split[1].strip())
         elif latest_version == "" and item_stripped.startswith("LATEST:"):
             item_split = item_stripped.split("LATEST: ")
-            latest_version = __timestamp_to_iso_format(item_split[1].strip())
+            latest_version = date_and_timestamp_to_iso_datetime(item_split[1].strip())
 
     return BootloaderVersion(status=update_status, current=current_version, latest=latest_version)
-
-
-def __timestamp_to_iso_format(datetime_and_ts: str) -> str:
-    """Format datetime and timestamp (seconds since the epoch) as ISO 8601 formatted string, including timezone
-    offset"""
-
-    timestamp: int = int(datetime_and_ts[datetime_and_ts.find("(") + 1 : datetime_and_ts.find(")")])
-    return datetime.fromtimestamp(timestamp, timezone.utc).isoformat()

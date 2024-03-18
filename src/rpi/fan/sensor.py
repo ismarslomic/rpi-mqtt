@@ -3,6 +3,16 @@
 import psutil
 
 from rpi.fan.types import FanSpeed
+from rpi.types import RpiSensor, SensorNotAvailableException
+
+
+class FanSpeedSensor(RpiSensor):
+    """Sensor for fan speed"""
+
+    name: str = "Fan speed"
+
+    def read(self) -> dict[str, FanSpeed]:
+        return read_fans_speed()
 
 
 def read_fans_speed() -> dict[str, FanSpeed]:
@@ -25,9 +35,13 @@ def read_fans_speed() -> dict[str, FanSpeed]:
     # psutil doc: https://psutil.readthedocs.io/en/latest/
     fans_speed: dict[str, FanSpeed] = {}
 
+    if not hasattr(psutil, "sensors_fans"):
+        raise SensorNotAvailableException("sensors_fans() not available for this Rpi")
+
     fans: dict[str, list] = psutil.sensors_fans()
+
     if not fans:
-        return fans_speed
+        raise SensorNotAvailableException("none fans detected for this Rpi")
 
     for fan_name, fan_measurements in fans.items():
         for fan_measurement in fan_measurements:

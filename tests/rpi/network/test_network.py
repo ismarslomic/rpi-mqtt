@@ -5,17 +5,20 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from rpi.network.network import (
+from rpi.network.sensor import (
+    EthernetMacAddressSensor,
+    HostnameSensor,
+    IpAddressSensor,
+    WifiConnectionSensor,
+    WifiMacAddressSensor,
     _parse_ip_from_tcp_content,
-    read_ethernet_mac_address,
-    read_wifi_connection,
-    read_wifi_mac_address,
 )
 from rpi.network.types import WiFiConnectionInfo
+from rpi.types import SensorNotAvailableException
 
 
 # patching 'iw' command run by the subprocess.run and reading mac address for Wi-Fi interface
-@patch("rpi.network.network.subprocess.run")
+@patch("rpi.network.sensor.subprocess.run")
 @patch("builtins.open", new_callable=mock_open, read_data="a9:3a:dd:b1:cc:46")
 def test_read_wifi_connection_when_connected(_, mock_run):
     # Mock subprocess.run running iw to read Wi-Fi connection
@@ -37,7 +40,7 @@ def test_read_wifi_connection_when_connected(_, mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    wifi_info: WiFiConnectionInfo = read_wifi_connection()
+    wifi_info: WiFiConnectionInfo = WifiConnectionSensor().read()
 
     # Assert Wi-Fi information returned
     assert "on" == wifi_info.status
@@ -48,7 +51,7 @@ def test_read_wifi_connection_when_connected(_, mock_run):
 
 
 # patching 'iw' command run by the subprocess.run
-@patch("rpi.network.network.subprocess.run")
+@patch("rpi.network.sensor.subprocess.run")
 @patch("builtins.open", new_callable=mock_open, read_data="a9:3a:dd:b1:cc:46")
 def test_read_wifi_connection_when_disconnected(_, mock_run):
     # Mock subprocess.run running vcgencmd to read GPU temperature
@@ -56,7 +59,7 @@ def test_read_wifi_connection_when_disconnected(_, mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    wifi_info: WiFiConnectionInfo = read_wifi_connection()
+    wifi_info: WiFiConnectionInfo = WifiConnectionSensor().read()
 
     # Assert Wi-Fi information returned
     assert "off" == wifi_info.status
@@ -69,7 +72,7 @@ def test_read_wifi_connection_when_disconnected(_, mock_run):
 @patch("builtins.open", new_callable=mock_open, read_data="a8:3a:dd:b1:cc:45")
 def test_read_ethernet_mac_address_when_success(_):
     # Call function
-    actual_mac_address = read_ethernet_mac_address()
+    actual_mac_address = EthernetMacAddressSensor().read()
 
     # Assert mac address returned
     assert "a8:3a:dd:b1:cc:45" == actual_mac_address
@@ -78,20 +81,10 @@ def test_read_ethernet_mac_address_when_success(_):
 @patch("builtins.open", new_callable=mock_open, read_data="a9:3a:dd:b1:cc:46")
 def test_read_wifi_mac_address_when_success(_):
     # Call function
-    actual_mac_address = read_wifi_mac_address()
+    actual_mac_address = WifiMacAddressSensor().read()
 
     # Assert mac address returned
     assert "a9:3a:dd:b1:cc:46" == actual_mac_address
-
-
-@patch("builtins.open", side_effect=FileNotFoundError("File not found"))
-def test_read_ethernet_mac_address_when_error2(_):
-    # Call function
-    with pytest.raises(RuntimeError) as exec_info:
-        read_ethernet_mac_address()
-
-    # Assert error message
-    assert "Failed to read mac address" in str(exec_info)
 
 
 def test_parse_ip_from_tcp_content():
@@ -139,3 +132,53 @@ def test_signal_strength_quality_when_disconnected():
         status="off", ssid="", signal_strength_dbm=0, freq_mhz=0, mac_addr="a9:3a:dd:b1:cc:46"
     )
     assert wifi_info.signal_strength_quality == "N/A"
+
+
+@patch("builtins.open", side_effect=FileNotFoundError("No such file or directory"))
+def test_read_ip_address_when_not_available_for_platform(_):
+    # Call function
+    with pytest.raises(SensorNotAvailableException) as exec_info:
+        IpAddressSensor().read()
+
+    # Assert error message
+    assert "ip address file not available for this Rpi" in str(exec_info)
+
+
+@patch("builtins.open", side_effect=FileNotFoundError("No such file or directory"))
+def test_read_hostname_when_not_available_for_platform(_):
+    # Call function
+    with pytest.raises(SensorNotAvailableException) as exec_info:
+        HostnameSensor().read()
+
+    # Assert error message
+    assert "hostname file not available for this Rpi" in str(exec_info)
+
+
+@patch("builtins.open", side_effect=FileNotFoundError("No such file or directory"))
+def test_read_ethernet_mac_address_when_not_available_for_platform(_):
+    # Call function
+    with pytest.raises(SensorNotAvailableException) as exec_info:
+        EthernetMacAddressSensor().read()
+
+    # Assert error message
+    assert "Failed to read mac address" in str(exec_info)
+
+
+@patch("builtins.open", side_effect=FileNotFoundError("No such file or directory"))
+def test_read_wifi_mac_address_when_not_available_for_platform(_):
+    # Call function
+    with pytest.raises(SensorNotAvailableException) as exec_info:
+        WifiMacAddressSensor().read()
+
+    # Assert error message
+    assert "Failed to read mac address" in str(exec_info)
+
+
+@patch("rpi.network.sensor.subprocess.run", side_effect=FileNotFoundError("iw not found"))
+def test_read_wifi_connection_when_not_available_for_platform(_):
+    # Call function
+    with pytest.raises(SensorNotAvailableException) as exec_info:
+        WifiConnectionSensor().read()
+
+    # Assert error message
+    assert "Wi-Fi connection info not available for this Rpi" in str(exec_info)

@@ -3,11 +3,14 @@
 
 from unittest.mock import MagicMock, patch
 
-from rpi.bootloader.bootloader import read_rpi_bootloader_version
+import pytest
+
+from rpi.bootloader.sensor import BootloaderSensor
 from rpi.bootloader.types import BootloaderVersion
+from rpi.types import SensorNotAvailableException
 
 
-@patch("rpi.bootloader.bootloader.subprocess.run")
+@patch("rpi.bootloader.sensor.subprocess.run")
 def test_read_bootloader_version_up_to_date(mock_run):
     """Test reading bootloader version when the current version is up-to-date"""
 
@@ -23,7 +26,7 @@ def test_read_bootloader_version_up_to_date(mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    bootloader_version: BootloaderVersion = read_rpi_bootloader_version()
+    bootloader_version: BootloaderVersion = BootloaderSensor().read()
 
     # Assert
     assert "up to date" == bootloader_version.status
@@ -31,7 +34,7 @@ def test_read_bootloader_version_up_to_date(mock_run):
     assert "2023-12-06T18:29:25+00:00" == bootloader_version.latest
 
 
-@patch("rpi.bootloader.bootloader.subprocess.run")
+@patch("rpi.bootloader.sensor.subprocess.run")
 def test_read_bootloader_version_update_available(mock_run):
     """Test reading bootloader version when there is an update available"""
 
@@ -48,9 +51,19 @@ def test_read_bootloader_version_update_available(mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    bootloader_version: BootloaderVersion = read_rpi_bootloader_version()
+    bootloader_version: BootloaderVersion = BootloaderSensor().read()
 
     # Assert
     assert "update available" == bootloader_version.status
     assert "2023-11-20T19:40:17+00:00" == bootloader_version.current
     assert "2023-12-06T18:29:25+00:00" == bootloader_version.latest
+
+
+@patch("rpi.bootloader.sensor.subprocess.run", side_effect=FileNotFoundError("rpi-eeprom-update not found"))
+def test_read_bootloader_not_available_for_platform(_):
+    # Call function
+    with pytest.raises(SensorNotAvailableException) as exec_info:
+        BootloaderSensor().read()
+
+    # Assert error message
+    assert "rpi-eeprom-update not available for this Rpi" in str(exec_info)

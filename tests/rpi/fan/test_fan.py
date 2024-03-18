@@ -2,12 +2,14 @@
 """Tests to verify the fans speed of Rpi hardware components"""
 
 from collections import namedtuple
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import psutil
+import pytest
 
-from rpi.fan.fan import read_fans_speed
+from rpi.fan.sensor import FanSpeedSensor, read_fans_speed
 from rpi.fan.types import FanSpeed
+from rpi.types import SensorNotAvailableException
 
 
 def test_read_fans_speed():
@@ -17,7 +19,7 @@ def test_read_fans_speed():
     psutil.sensors_fans = MagicMock(return_value=psutil_mock)
 
     # Call function
-    fans_speed: dict[str, FanSpeed] = read_fans_speed()
+    fans_speed: dict[str, FanSpeed] = FanSpeedSensor().read()
 
     # Assert 1 fan speed reading
     assert 1 == len(fans_speed)
@@ -30,11 +32,25 @@ def test_read_fans_speed():
 
 def test_read_fans_when_no_fans():
     # Mock psutil
-    psutil_mock: dict[str, list] = {}
-    psutil.sensors_fans = MagicMock(return_value=psutil_mock)
+    psutil.sensors_fans = MagicMock(return_value=None)
 
     # Call function
-    fans_speed: dict[str, FanSpeed] = read_fans_speed()
+    with pytest.raises(SensorNotAvailableException) as exec_info:
+        FanSpeedSensor().read()
 
-    # Assert 0 fan speed reading
-    assert 0 == len(fans_speed)
+    # Assert error message
+    assert "none fans detected for this Rpi" in str(exec_info)
+
+
+def test_read_fans_fan_not_available_for_platform():
+    # Mock psutil
+    # Make sure that attribute is deleted if it exists (depending on the platform tests are run)
+    if hasattr(psutil, "sensors_fans"):
+        del psutil.sensors_fans
+
+    # Call function
+    with pytest.raises(SensorNotAvailableException) as exec_info:
+        FanSpeedSensor().read()
+
+    # Assert error message
+    assert "sensors_fans() not available for this Rpi" in str(exec_info)
