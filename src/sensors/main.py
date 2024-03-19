@@ -5,22 +5,42 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from json import JSONEncoder
+from typing import List
 
-from sensors.bootloader.sensor import read_rpi_bootloader_version
+from sensors.bootloader.sensor import BootloaderSensor, read_rpi_bootloader_version
 from sensors.bootloader.types import BootloaderVersion
-from sensors.cpu.sensor import read_cpu_use_percent, read_load_average
+from sensors.cpu.sensor import CpuLoadAvgSensor, CpuUsePctSensor, read_cpu_use_percent, read_load_average
 from sensors.cpu.types import LoadAverage
-from sensors.disk.sensor import read_disk_use
+from sensors.disk.sensor import DiskUseSensor, read_disk_use
 from sensors.disk.types import DiskUse
-from sensors.fan.sensor import read_fans_speed
+from sensors.fan.sensor import FanSpeedSensor, read_fans_speed
 from sensors.fan.types import FanSpeed
-from sensors.memory.sensor import read_memory_use
+from sensors.memory.sensor import MemoryUseSensor, read_memory_use
 from sensors.memory.types import MemoryUse
-from sensors.model.sensor import read_rpi_model
-from sensors.network.sensor import read_ethernet_mac_address, read_hostname, read_ip, read_wifi_connection
+from sensors.model.sensor import RpiModelSensor, read_rpi_model
+from sensors.network.sensor import (
+    EthernetMacAddressSensor,
+    HostnameSensor,
+    IpAddressSensor,
+    WifiConnectionSensor,
+    WifiMacAddressSensor,
+    read_ethernet_mac_address,
+    read_hostname,
+    read_ip,
+    read_wifi_connection,
+)
 from sensors.network.types import WiFiConnectionInfo
-from sensors.os.sensor import read_number_of_available_updates, read_os_release, read_rpi_boot_time, read_rpi_os_kernel
-from sensors.temperature.sensor import read_temperature
+from sensors.os.sensor import (
+    AvailableUpdatesSensor,
+    BootTimeSensor,
+    OsKernelSensor,
+    OsReleaseSensor,
+    read_number_of_available_updates,
+    read_os_release,
+    read_rpi_boot_time,
+    read_rpi_os_kernel,
+)
+from sensors.temperature.sensor import TemperatureSensor, read_temperature
 from sensors.temperature.types import HwTemperature
 from sensors.throttle.sensor import ThrottledSensor, read_throttle_status
 from sensors.throttle.types import SystemThrottleStatus
@@ -96,14 +116,46 @@ def print_sensors() -> None:
     print(all_sensors_json_data)
 
 
-def check_sensor_availability():
-    """Print sensor availability"""
+def create_sensors() -> List[RpiSensor]:
+    """Return a list of all sensors for Rpi"""
 
-    sensor: RpiSensor = ThrottledSensor()
-    print("name:" + sensor.name)
-    print("available:" + str(sensor.available()))
-    # print(sensor.read())
+    return [
+        BootloaderSensor(enabled=False),
+        CpuUsePctSensor(enabled=True),
+        CpuLoadAvgSensor(enabled=False),
+        DiskUseSensor(enabled=True),
+        FanSpeedSensor(enabled=False),
+        MemoryUseSensor(enabled=True),
+        RpiModelSensor(enabled=False),
+        IpAddressSensor(enabled=True),
+        HostnameSensor(enabled=False),
+        EthernetMacAddressSensor(enabled=True),
+        WifiMacAddressSensor(enabled=False),
+        WifiConnectionSensor(enabled=True),
+        OsKernelSensor(enabled=False),
+        OsReleaseSensor(enabled=True),
+        AvailableUpdatesSensor(enabled=False),
+        BootTimeSensor(enabled=True),
+        TemperatureSensor(enabled=False),
+        ThrottledSensor(enabled=True),
+    ]
+
+
+def print_sensor_availability():
+    """Print which sensors are available"""
+
+    all_sensors: list[RpiSensor] = create_sensors()
+
+    for s in all_sensors:
+        print(s.name)
+        print(f"Available: {s.available()}")
+        if s.available():
+            print(f"Value: {s.read()}")
+
+        if hasattr(s, "enabled"):
+            print(f"Enabled: {s.enabled()}")
+        print()
 
 
 if __name__ == "__main__":
-    check_sensor_availability()
+    print_sensor_availability()

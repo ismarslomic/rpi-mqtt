@@ -19,7 +19,7 @@ def test_read_disk_use():
     psutil.disk_usage = MagicMock(return_value=psutil_mock)
 
     # Call function
-    disk_use: DiskUse = DiskUseSensor().read()
+    disk_use: DiskUse = DiskUseSensor(enabled=True).read()
 
     # Assert
     assert "/" == disk_use.path
@@ -37,7 +37,7 @@ def test_read_disk_not_available_for_platform():
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        DiskUseSensor().read()
+        DiskUseSensor(enabled=True).read()
 
     # Assert error message
     assert "disk_usage() not available for this Rpi" in str(exec_info)

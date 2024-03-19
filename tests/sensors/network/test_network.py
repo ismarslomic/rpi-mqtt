@@ -40,7 +40,7 @@ def test_read_wifi_connection_when_connected(_, mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    wifi_info: WiFiConnectionInfo = WifiConnectionSensor().read()
+    wifi_info: WiFiConnectionInfo = WifiConnectionSensor(enabled=True).read()
 
     # Assert Wi-Fi information returned
     assert "on" == wifi_info.status
@@ -59,7 +59,7 @@ def test_read_wifi_connection_when_disconnected(_, mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    wifi_info: WiFiConnectionInfo = WifiConnectionSensor().read()
+    wifi_info: WiFiConnectionInfo = WifiConnectionSensor(enabled=True).read()
 
     # Assert Wi-Fi information returned
     assert "off" == wifi_info.status
@@ -72,7 +72,7 @@ def test_read_wifi_connection_when_disconnected(_, mock_run):
 @patch("builtins.open", new_callable=mock_open, read_data="a8:3a:dd:b1:cc:45")
 def test_read_ethernet_mac_address_when_success(_):
     # Call function
-    actual_mac_address = EthernetMacAddressSensor().read()
+    actual_mac_address = EthernetMacAddressSensor(enabled=True).read()
 
     # Assert mac address returned
     assert "a8:3a:dd:b1:cc:45" == actual_mac_address
@@ -81,7 +81,7 @@ def test_read_ethernet_mac_address_when_success(_):
 @patch("builtins.open", new_callable=mock_open, read_data="a9:3a:dd:b1:cc:46")
 def test_read_wifi_mac_address_when_success(_):
     # Call function
-    actual_mac_address = WifiMacAddressSensor().read()
+    actual_mac_address = WifiMacAddressSensor(enabled=True).read()
 
     # Assert mac address returned
     assert "a9:3a:dd:b1:cc:46" == actual_mac_address
@@ -138,7 +138,7 @@ def test_signal_strength_quality_when_disconnected():
 def test_read_ip_address_when_not_available_for_platform(_):
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        IpAddressSensor().read()
+        IpAddressSensor(enabled=True).read()
 
     # Assert error message
     assert "ip address file not available for this Rpi" in str(exec_info)
@@ -148,7 +148,7 @@ def test_read_ip_address_when_not_available_for_platform(_):
 def test_read_hostname_when_not_available_for_platform(_):
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        HostnameSensor().read()
+        HostnameSensor(enabled=True).read()
 
     # Assert error message
     assert "hostname file not available for this Rpi" in str(exec_info)
@@ -158,7 +158,7 @@ def test_read_hostname_when_not_available_for_platform(_):
 def test_read_ethernet_mac_address_when_not_available_for_platform(_):
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        EthernetMacAddressSensor().read()
+        EthernetMacAddressSensor(enabled=True).read()
 
     # Assert error message
     assert "Failed to read mac address" in str(exec_info)
@@ -168,7 +168,7 @@ def test_read_ethernet_mac_address_when_not_available_for_platform(_):
 def test_read_wifi_mac_address_when_not_available_for_platform(_):
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        WifiMacAddressSensor().read()
+        WifiMacAddressSensor(enabled=True).read()
 
     # Assert error message
     assert "Failed to read mac address" in str(exec_info)
@@ -178,7 +178,7 @@ def test_read_wifi_mac_address_when_not_available_for_platform(_):
 def test_read_wifi_connection_when_not_available_for_platform(_):
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        WifiConnectionSensor().read()
+        WifiConnectionSensor(enabled=True).read()
 
     # Assert error message
     assert "Wi-Fi connection info not available for this Rpi" in str(exec_info)

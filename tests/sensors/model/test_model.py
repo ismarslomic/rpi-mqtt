@@ -13,7 +13,7 @@ from sensors.types import SensorNotAvailableException
 @patch("builtins.open", new_callable=mock_open, read_data="\x00Raspberry Pi 5 Model B Rev 1.0\x00")
 def test_read_rpi_model_and_strip_specific_characters(mock_file):
     # Call function
-    model: str = RpiModelSensor().read()
+    model: str = RpiModelSensor(enabled=True).read()
 
     # Assert
     assert "Raspberry Pi 5 Model B Rev 1.0" == model
@@ -23,7 +23,7 @@ def test_read_rpi_model_and_strip_specific_characters(mock_file):
 def test_read_model_not_available_for_platform(_):
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        RpiModelSensor().read()
+        RpiModelSensor(enabled=True).read()
 
     # Assert error message
     assert "rpi model file not available for this Rpi" in str(exec_info)

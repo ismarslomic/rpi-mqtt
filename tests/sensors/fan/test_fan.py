@@ -2,12 +2,12 @@
 """Tests to verify the fans speed of Rpi hardware components"""
 
 from collections import namedtuple
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import psutil
 import pytest
 
-from sensors.fan.sensor import FanSpeedSensor, read_fans_speed
+from sensors.fan.sensor import FanSpeedSensor
 from sensors.fan.types import FanSpeed
 from sensors.types import SensorNotAvailableException
 
@@ -19,7 +19,7 @@ def test_read_fans_speed():
     psutil.sensors_fans = MagicMock(return_value=psutil_mock)
 
     # Call function
-    fans_speed: dict[str, FanSpeed] = FanSpeedSensor().read()
+    fans_speed: dict[str, FanSpeed] = FanSpeedSensor(enabled=True).read()
 
     # Assert 1 fan speed reading
     assert 1 == len(fans_speed)
@@ -36,7 +36,7 @@ def test_read_fans_when_no_fans():
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        FanSpeedSensor().read()
+        FanSpeedSensor(enabled=True).read()
 
     # Assert error message
     assert "none fans detected for this Rpi" in str(exec_info)
@@ -50,7 +50,7 @@ def test_read_fans_fan_not_available_for_platform():
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        FanSpeedSensor().read()
+        FanSpeedSensor(enabled=True).read()
 
     # Assert error message
     assert "sensors_fans() not available for this Rpi" in str(exec_info)

@@ -30,7 +30,7 @@ def test_read_temperature(mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    temps: dict[str, HwTemperature] = TemperatureSensor().read()
+    temps: dict[str, HwTemperature] = TemperatureSensor(enabled=True).read()
 
     # Assert 3 temperature readings
     assert 3 == len(temps)
@@ -63,7 +63,7 @@ def test_read_temperature_when_sensors_temperatures_not_available_for_platform()
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        TemperatureSensor().read()
+        TemperatureSensor(enabled=True).read()
 
     # Assert error message
     assert "sensors_temperatures() not available for this Rpi" in str(exec_info)
@@ -75,7 +75,7 @@ def test_read_temperature_when_none_temperatures_detected():
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        TemperatureSensor().read()
+        TemperatureSensor(enabled=True).read()
 
     # Assert error message
     assert "none temperatures detected for this Rpi" in str(exec_info)
@@ -94,7 +94,7 @@ def test_read_temperature_when_vcgencmd_not_available_for_platform(_):
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        TemperatureSensor().read()
+        TemperatureSensor(enabled=True).read()
 
     # Assert error message
     assert "vcgencmd not available for this Rpi" in str(exec_info)

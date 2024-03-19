@@ -16,7 +16,7 @@ def test_read_cpu_use_percent():
     psutil.cpu_percent = MagicMock(return_value=0.2)
 
     # Call function
-    cpu_use_percent: float = CpuUsePctSensor().read()
+    cpu_use_percent: float = CpuUsePctSensor(enabled=True).read()
 
     # Assert
     assert 0.2 == cpu_use_percent
@@ -30,7 +30,7 @@ def test_read_cpu_use_percent_not_available_for_platform():
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        CpuUsePctSensor().read()
+        CpuUsePctSensor(enabled=True).read()
 
     # Assert error message
     assert "cpu_percent() not available for this Rpi" in str(exec_info)
@@ -42,7 +42,7 @@ def test_read_load_average():
     psutil.getloadavg = MagicMock(return_value=(0.28125, 0.0771484375, 0.02490234375))
 
     # Call function
-    load_average: LoadAverage = CpuLoadAvgSensor().read()
+    load_average: LoadAverage = CpuLoadAvgSensor(enabled=True).read()
 
     # Assert
     assert 4 == load_average.cpu_cores
@@ -60,7 +60,7 @@ def test_read_load_average_cpu_count_not_available_for_platform():
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        CpuLoadAvgSensor().read()
+        CpuLoadAvgSensor(enabled=True).read()
 
     # Assert error message
     assert "cpu_count() not available for this Rpi" in str(exec_info)
@@ -75,7 +75,7 @@ def test_read_load_average_getloadavg_not_available_for_platform():
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        CpuLoadAvgSensor().read()
+        CpuLoadAvgSensor(enabled=True).read()
 
     # Assert error message
     assert "getloadavg() not available for this Rpi" in str(exec_info)
