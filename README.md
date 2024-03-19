@@ -7,6 +7,7 @@
 - `sensors` - modules to read Rpi sensor data
 
 ## Installation
+
 ```bash
 # Clone this git repo
 git clone https://github.com/ismarslomic/rpi-mqtt.git
@@ -30,6 +31,11 @@ cd src
 python3 -m sensors.main
 ```
 
+## User settings
+
+You can provide user settings by providing a `settings.yml` file according to the JSON
+schema [settings.json](docs/settings.json) or markdown [settings.md](docs/settings.md).
 
 ## Development
+
 Read [DEVELOPMENT.md](DEVELOPMENT.md) for more information about how to contribute.

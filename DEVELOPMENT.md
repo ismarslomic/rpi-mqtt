@@ -82,6 +82,15 @@ poetry show --outdated
 poetry add <outdated package>@latest
 ```
 
+## Auto generated documentation
+
+To update documentation of the user settings as JSON schema [settings.json](docs/settings.json)
+and markdown [settings.md](docs/settings.md)
+
+```bash
+poetry run generate_docs
+```
+
 ## Testing
 
 ### Run tests in command line

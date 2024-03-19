@@ -45,6 +45,8 @@ from sensors.temperature.types import HwTemperature
 from sensors.throttle.sensor import ThrottledSensor, read_throttle_status
 from sensors.throttle.types import SystemThrottleStatus
 from sensors.types import RpiSensor
+from settings.settings import read_settings
+from settings.types import Settings
 
 
 @dataclass
@@ -116,37 +118,35 @@ def print_sensors() -> None:
     print(all_sensors_json_data)
 
 
-def create_sensors() -> List[RpiSensor]:
+def create_sensors(settings: Settings) -> List[RpiSensor]:
     """Return a list of all sensors for Rpi"""
 
     return [
-        BootloaderSensor(enabled=False),
-        CpuUsePctSensor(enabled=True),
-        CpuLoadAvgSensor(enabled=False),
-        DiskUseSensor(enabled=True),
-        FanSpeedSensor(enabled=False),
-        MemoryUseSensor(enabled=True),
-        RpiModelSensor(enabled=False),
-        IpAddressSensor(enabled=True),
-        HostnameSensor(enabled=False),
-        EthernetMacAddressSensor(enabled=True),
-        WifiMacAddressSensor(enabled=False),
-        WifiConnectionSensor(enabled=True),
-        OsKernelSensor(enabled=False),
-        OsReleaseSensor(enabled=True),
-        AvailableUpdatesSensor(enabled=False),
-        BootTimeSensor(enabled=True),
-        TemperatureSensor(enabled=False),
-        ThrottledSensor(enabled=True),
+        BootloaderSensor(enabled=settings.sensors.boot_loader),
+        CpuUsePctSensor(enabled=settings.sensors.cpu_use),
+        CpuLoadAvgSensor(enabled=settings.sensors.cpu_load),
+        DiskUseSensor(enabled=settings.sensors.disk),
+        FanSpeedSensor(enabled=settings.sensors.fan),
+        MemoryUseSensor(enabled=settings.sensors.memory),
+        RpiModelSensor(enabled=settings.sensors.rpi_model),
+        IpAddressSensor(enabled=settings.sensors.ip_address),
+        HostnameSensor(enabled=settings.sensors.hostname),
+        EthernetMacAddressSensor(enabled=settings.sensors.ethernet_mac_address),
+        WifiMacAddressSensor(enabled=settings.sensors.wifi_mac_address),
+        WifiConnectionSensor(enabled=settings.sensors.wifi_connection),
+        OsKernelSensor(enabled=settings.sensors.os_kernel),
+        OsReleaseSensor(enabled=settings.sensors.os_release),
+        AvailableUpdatesSensor(enabled=settings.sensors.available_updates),
+        BootTimeSensor(enabled=settings.sensors.boot_time),
+        TemperatureSensor(enabled=settings.sensors.temperature),
+        ThrottledSensor(enabled=settings.sensors.throttle),
     ]
 
 
-def print_sensor_availability():
+def print_sensor_availability(sensors: list[RpiSensor]):
     """Print which sensors are available"""
 
-    all_sensors: list[RpiSensor] = create_sensors()
-
-    for s in all_sensors:
+    for s in sensors:
         print(s.name)
         print(f"Available: {s.available()}")
         if s.available():
@@ -158,4 +158,6 @@ def print_sensor_availability():
 
 
 if __name__ == "__main__":
-    print_sensor_availability()
+    user_settings: Settings = read_settings()
+    all_sensors: list[RpiSensor] = create_sensors(settings=user_settings)
+    print_sensor_availability(all_sensors)
