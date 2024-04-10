@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Auto generate documentation"""
 
-from settings.settings import write_model_to_json, write_model_to_mkd
+from settings.gen_doc import write_model_to_json, write_model_to_mkd
 
 
 def main():
