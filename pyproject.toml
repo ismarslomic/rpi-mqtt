@@ -10,7 +10,7 @@ packages = [{ include = "mqtt", from = "src" }]
 python = "^3.11"
 psutil = "5.9.8"
 pyyaml = "^6.0.1"
-pydantic = "^2.6.4"
+pydantic = "^2.7.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
