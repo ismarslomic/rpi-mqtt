@@ -1,52 +1,48 @@
 #!/usr/bin/env python3
 """Service for reading all Rpi sensors and returning summary of all"""
-
 import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from json import JSONEncoder
 from typing import List
 
-from sensors.bootloader.sensor import BootloaderSensor, read_rpi_bootloader_version
+from cli_utils import cli_create_arg_parser
+from log_utils import set_global_log_config
+from sensors.bootloader.sensor import BootloaderSensor
 from sensors.bootloader.types import BootloaderVersion
-from sensors.cpu.sensor import CpuLoadAvgSensor, CpuUsePctSensor, read_cpu_use_percent, read_load_average
+from sensors.cpu.sensor import CpuLoadAvgSensor, CpuUsePctSensor
 from sensors.cpu.types import LoadAverage
-from sensors.disk.sensor import DiskUseSensor, read_disk_use
+from sensors.disk.sensor import DiskUseSensor
 from sensors.disk.types import DiskUse
-from sensors.fan.sensor import FanSpeedSensor, read_fans_speed
+from sensors.fan.sensor import FanSpeedSensor
 from sensors.fan.types import FanSpeed
-from sensors.memory.sensor import MemoryUseSensor, read_memory_use
+from sensors.memory.sensor import MemoryUseSensor
 from sensors.memory.types import MemoryUse
-from sensors.model.sensor import RpiModelSensor, read_rpi_model
+from sensors.model.sensor import RpiModelSensor
 from sensors.network.sensor import (
     EthernetMacAddressSensor,
     HostnameSensor,
     IpAddressSensor,
     WifiConnectionSensor,
     WifiMacAddressSensor,
-    read_ethernet_mac_address,
-    read_hostname,
-    read_ip,
-    read_wifi_connection,
 )
 from sensors.network.types import WiFiConnectionInfo
-from sensors.os.sensor import (
-    AvailableUpdatesSensor,
-    BootTimeSensor,
-    OsKernelSensor,
-    OsReleaseSensor,
-    read_number_of_available_updates,
-    read_os_release,
-    read_rpi_boot_time,
-    read_rpi_os_kernel,
-)
-from sensors.temperature.sensor import TemperatureSensor, read_temperature
+from sensors.os.sensor import AvailableUpdatesSensor, BootTimeSensor, OsKernelSensor, OsReleaseSensor
+from sensors.temperature.sensor import TemperatureSensor
 from sensors.temperature.types import HwTemperature
-from sensors.throttle.sensor import ThrottledSensor, read_throttle_status
+from sensors.throttle.sensor import ThrottledSensor
 from sensors.throttle.types import SystemThrottleStatus
 from sensors.types import RpiSensor
 from settings.settings import read_settings
 from settings.types import Settings
+
+# Read user settings
+parser = cli_create_arg_parser()
+settings_file_path = parser.parse_args().settings_file
+user_settings: Settings = read_settings(file_path=settings_file_path)
+
+# Configure logging
+set_global_log_config(settings=user_settings)
 
 
 @dataclass
@@ -86,35 +82,35 @@ def __date_time_now_utc() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
-def read_sensors() -> RpiMonitorSummary:
+def read_sensors(settings: Settings) -> RpiMonitorSummary:
     """Read all sensors and return a summary"""
 
     return RpiMonitorSummary(
         sensors_updated_at=__date_time_now_utc(),
-        rpi_model=read_rpi_model(),
-        ip=read_ip(),
-        host_name=read_hostname(),
-        eth_mac_addr=read_ethernet_mac_address(),
-        os_kernel=read_rpi_os_kernel(),
-        os_release=read_os_release(),
-        booted_at=read_rpi_boot_time(),
-        avail_updates=read_number_of_available_updates(),
-        bootloader_ver=read_rpi_bootloader_version(),
-        cpu_use_pct=read_cpu_use_percent(),
-        cpu_load_average=read_load_average(),
-        disk_usage=read_disk_use(),
-        memory_usage=read_memory_use(),
-        fan_spead=read_fans_speed(),
-        wifi=read_wifi_connection(),
-        temperature=read_temperature(),
-        throttle=read_throttle_status(),
+        rpi_model=RpiModelSensor(enabled=settings.sensors.rpi_model).read(),
+        ip=IpAddressSensor(enabled=settings.sensors.ip_address).read(),
+        host_name=HostnameSensor(enabled=settings.sensors.hostname).read(),
+        eth_mac_addr=EthernetMacAddressSensor(enabled=settings.sensors.ethernet_mac_address).read(),
+        os_kernel=OsKernelSensor(enabled=settings.sensors.os_kernel).read(),
+        os_release=OsReleaseSensor(enabled=settings.sensors.os_release).read(),
+        booted_at=BootTimeSensor(enabled=settings.sensors.boot_time).read(),
+        avail_updates=AvailableUpdatesSensor(enabled=settings.sensors.available_updates).read(),
+        bootloader_ver=BootloaderSensor(enabled=settings.sensors.boot_loader).read(),
+        cpu_use_pct=CpuUsePctSensor(enabled=settings.sensors.cpu_use).read(),
+        cpu_load_average=CpuLoadAvgSensor(enabled=settings.sensors.cpu_load).read(),
+        disk_usage=DiskUseSensor(enabled=settings.sensors.disk).read(),
+        memory_usage=MemoryUseSensor(enabled=settings.sensors.memory).read(),
+        fan_spead=FanSpeedSensor(enabled=settings.sensors.fan).read(),
+        wifi=WifiConnectionSensor(enabled=settings.sensors.wifi_connection).read(),
+        temperature=TemperatureSensor(enabled=settings.sensors.temperature).read(),
+        throttle=ThrottledSensor(enabled=settings.sensors.throttle).read(),
     )
 
 
-def print_sensors() -> None:
+def print_sensors(settings: Settings) -> None:
     """Print sensors summary as json"""
 
-    all_sensors_json_data = json.dumps(read_sensors(), indent=4, cls=RpiMonitorSummaryEncoder)
+    all_sensors_json_data = json.dumps(read_sensors(settings), indent=4, cls=RpiMonitorSummaryEncoder)
     print(all_sensors_json_data)
 
 
@@ -158,6 +154,5 @@ def print_sensor_availability(sensors: list[RpiSensor]):
 
 
 if __name__ == "__main__":
-    user_settings: Settings = read_settings()
     all_sensors: list[RpiSensor] = create_sensors(settings=user_settings)
     print_sensor_availability(all_sensors)

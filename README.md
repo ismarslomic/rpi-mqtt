@@ -28,7 +28,7 @@ poetry install --without dev --no-root
 
 # Run python program
 cd src
-python3 -m sensors.main
+python3 -m sensors.main -s /Users/john/rpi-mqtt/settings.yml
 ```
 
 ## User settings

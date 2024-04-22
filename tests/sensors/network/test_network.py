@@ -141,7 +141,7 @@ def test_read_ip_address_when_not_available_for_platform(_):
         IpAddressSensor(enabled=True).read()
 
     # Assert error message
-    assert "ip address file not available for this Rpi" in str(exec_info)
+    assert "Ip address file not available for this Rpi" in str(exec_info)
 
 
 @patch("builtins.open", side_effect=FileNotFoundError("No such file or directory"))

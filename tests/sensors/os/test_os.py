@@ -78,7 +78,7 @@ def test_read_os_release_when_not_available_for_platform(_):
         OsReleaseSensor(enabled=True).read()
 
     # Assert
-    assert "os release file not available for this Rpi" in str(exec_info)
+    assert "OS release file not available for this Rpi" in str(exec_info)
 
 
 # Tests for Available updates sensor

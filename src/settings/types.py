@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Types in module Settings"""
-
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -39,10 +39,24 @@ class MqttSettings(BaseModel):
     )
 
 
+class LogLevel(str, Enum):
+    """Enum for available log levels"""
+
+    CRITICAL = "CRITICAL"
+    FATAL = "FATAL"
+    ERROR = "ERROR"
+    WARN = "WARNING"
+    WARNING = "WARNING"
+    INFO = "INFO"
+    DEBUG = "DEBUG"
+    NOTSET = "NOTSET"
+
+
 class ScriptSettings(BaseModel):
     """General settings for this python script"""
 
     update_interval: int = Field(default=60, description="The interval to update sensor data to the MQTT broker")
+    log_level: LogLevel = Field(default=LogLevel.INFO, description="The log level of this python script")
 
 
 class SensorsMonitoringSettings(BaseModel):
@@ -71,8 +85,8 @@ class SensorsMonitoringSettings(BaseModel):
 class Settings(BaseModel):
     """Model/schema for settings of rpi-mqtt"""
 
-    mqtt: MqttSettings = Field(description="Settings for the MQTT broker connection", default=MqttSettings())
-    script: ScriptSettings = Field(description="General settings for this python script", default=ScriptSettings())
+    mqtt: MqttSettings = Field(default=MqttSettings(), description="Settings for the MQTT broker connection")
+    script: ScriptSettings = Field(default=ScriptSettings(), description="General settings for this python script")
     sensors: SensorsMonitoringSettings = Field(
-        description="Settings for monitoring sensors", default=SensorsMonitoringSettings()
+        default=SensorsMonitoringSettings(), description="Settings for monitoring sensors"
     )

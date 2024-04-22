@@ -9,18 +9,22 @@ class RpiModelSensor(RpiSensor):
     name: str = "Rpi model"
 
     def read(self) -> str:
-        return read_rpi_model()
+        self.logger.debug("Reading sensor data")
 
+        return self._read_rpi_model()
 
-def read_rpi_model() -> str:
-    """Read Rpi model"""
+    def _read_rpi_model(self) -> str:
+        """Read Rpi model"""
 
-    model_file_name = "/sys/firmware/devicetree/base/model"
+        model_file_name = "/sys/firmware/devicetree/base/model"
 
-    try:
-        with open(model_file_name, "r", encoding="utf-8") as f:
-            model = f.readline().strip("\x00")
+        try:
+            with open(model_file_name, "r", encoding="utf-8") as f:
+                model = f.readline().strip("\x00")
 
-        return model
-    except FileNotFoundError as err:
-        raise SensorNotAvailableException("rpi model file not available for this Rpi") from err
+            self.logger.debug("Reading sensor data successfully")
+
+            return model
+        except FileNotFoundError as err:
+            self.logger.warning("Rpi model file not available for this Rpi")
+            raise SensorNotAvailableException("rpi model file not available for this Rpi") from err

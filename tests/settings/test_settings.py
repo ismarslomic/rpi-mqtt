@@ -23,7 +23,7 @@ def test_default_settings():
     # Assert Script Settings
     assert 60 == script_settings.update_interval
 
-    # Assert Sensors Monitoring Settings
+    # Assert that all Sensors Monitoring Settings are enabled by default
     for field_name in sensors_settings.__dict__:
         assert True is sensors_settings.__dict__[field_name]
 
@@ -55,11 +55,7 @@ def test_settings_from_file():
 
     # Assert Sensors Monitoring Settings
     assert False is sensors_settings.boot_loader
-    assert False is sensors_settings.cpu
+    assert False is sensors_settings.cpu_use
     assert False is sensors_settings.disk
-    assert True is sensors_settings.fan
     assert False is sensors_settings.memory
-    assert True is sensors_settings.network
-    assert True is sensors_settings.os
-    assert True is sensors_settings.temperature
-    assert True is sensors_settings.throttle
+    assert False is sensors_settings.ethernet_mac_address

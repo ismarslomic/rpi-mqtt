@@ -16,23 +16,25 @@ class DiskUseSensor(RpiSensor):
     name: str = "Disk use"
 
     def read(self) -> DiskUse:
-        return read_disk_use()
+        self.logger.debug("Reading sensor data")
+        return self._read_disk_use()
 
+    def _read_disk_use(self) -> DiskUse:
+        """Read statistics about disk usage for path '/'"""
 
-def read_disk_use() -> DiskUse:
-    """Read statistics about disk usage for path '/'"""
+        # doc: https://psutil.readthedocs.io/en/latest/
+        if not hasattr(psutil, "disk_usage"):
+            self.logger.warning("This platform does not support psutil.disk_usage()")
+            raise SensorNotAvailableException("disk_usage() not available for this Rpi")
 
-    # doc: https://psutil.readthedocs.io/en/latest/
-    if not hasattr(psutil, "disk_usage"):
-        raise SensorNotAvailableException("disk_usage() not available for this Rpi")
+        path = "/"
+        disk_usage: namedtuple = psutil.disk_usage(path)
 
-    path = "/"
-    disk_usage: namedtuple = psutil.disk_usage(path)
-
-    return DiskUse(
-        path=path,
-        total_gib=bytes_to_gibibytes(disk_usage.total),
-        used_gib=bytes_to_gibibytes(disk_usage.used),
-        used_pct=round_percent(disk_usage.percent),
-        free_gib=bytes_to_gibibytes(disk_usage.free),
-    )
+        self.logger.debug("Reading sensor data successfully")
+        return DiskUse(
+            path=path,
+            total_gib=bytes_to_gibibytes(disk_usage.total),
+            used_gib=bytes_to_gibibytes(disk_usage.used),
+            used_pct=round_percent(disk_usage.percent),
+            free_gib=bytes_to_gibibytes(disk_usage.free),
+        )
