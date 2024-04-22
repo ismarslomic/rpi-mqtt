@@ -9,15 +9,17 @@ mqtt:
 script:
   # The interval to update sensor data to MQTT broker. In seconds. (Default: every 60 sec). Required.
   update_interval: 60
+  # The log level for the python script
+  log_level: ERROR
 
 # Enable (true) or disable (false) sensors you want to be published to MQTT broker
 sensors:
-  boot_loader: true
-  cpu: true
-  disk: true
-  fan: true
-  memory: true
-  network: true
-  os: true
-  temperature: true
-  throttle: true
+  boot_loader: True
+  cpu: True
+  disk: True
+  fan: True
+  memory: True
+  network: True
+  os: True
+  temperature: True
+  throttle: True

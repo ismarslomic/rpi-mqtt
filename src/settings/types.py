@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Types in module Settings"""
-
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -39,31 +39,54 @@ class MqttSettings(BaseModel):
     )
 
 
+class LogLevel(str, Enum):
+    """Enum for available log levels"""
+
+    CRITICAL = "CRITICAL"
+    FATAL = "FATAL"
+    ERROR = "ERROR"
+    WARN = "WARNING"
+    WARNING = "WARNING"
+    INFO = "INFO"
+    DEBUG = "DEBUG"
+    NOTSET = "NOTSET"
+
+
 class ScriptSettings(BaseModel):
     """General settings for this python script"""
 
     update_interval: int = Field(default=60, description="The interval to update sensor data to the MQTT broker")
+    log_level: LogLevel = Field(default=LogLevel.INFO, description="The log level of this python script")
 
 
 class SensorsMonitoringSettings(BaseModel):
     """Settings for monitoring sensors"""
 
-    boot_loader: bool = Field(default=True, description="Enable monitoring of the boot loader")
-    cpu: bool = Field(default=True, description="Enable monitoring of the CPU")
-    disk: bool = Field(default=True, description="Enable monitoring of the disk")
-    fan: bool = Field(default=True, description="Enable monitoring of the fan")
-    memory: bool = Field(default=True, description="Enable monitoring of the memory")
-    network: bool = Field(default=True, description="Enable monitoring of the network")
-    os: bool = Field(default=True, description="Enable monitoring of the os")
-    temperature: bool = Field(default=True, description="Enable monitoring of the temperatures")
-    throttle: bool = Field(default=True, description="Enable monitoring of the throttling")
+    boot_loader: bool = Field(default=True, description="Enable the bootloader sensor")
+    cpu_use: bool = Field(default=True, description="Enable the CPU usage sensor")
+    cpu_load: bool = Field(default=True, description="Enable the CPU load sensor")
+    disk: bool = Field(default=True, description="Enable the disk usage sensor")
+    fan: bool = Field(default=True, description="Enable the fan speed sensor")
+    memory: bool = Field(default=True, description="Enable the memory usage sensor")
+    rpi_model: bool = Field(default=True, description="Enable the Rpi model sensor")
+    ip_address: bool = Field(default=True, description="Enable the IP address sensor")
+    hostname: bool = Field(default=True, description="Enable the hostname sensor")
+    ethernet_mac_address: bool = Field(default=True, description="Enable the ethernet mac address sensor")
+    wifi_mac_address: bool = Field(default=True, description="Enable the wifi mac address sensor")
+    wifi_connection: bool = Field(default=True, description="Enable the wifi connection info sensor")
+    os_kernel: bool = Field(default=True, description="Enable the os kernel sensor")
+    os_release: bool = Field(default=True, description="Enable the os release sensor")
+    available_updates: bool = Field(default=True, description="Enable the available updates sensor")
+    boot_time: bool = Field(default=True, description="Enable the boot time sensor")
+    temperature: bool = Field(default=True, description="Enable the temperature sensor")
+    throttle: bool = Field(default=True, description="Enable the throttling sensor")
 
 
 class Settings(BaseModel):
     """Model/schema for settings of rpi-mqtt"""
 
-    mqtt: MqttSettings = Field(description="Settings for the MQTT broker connection", default=MqttSettings())
-    script: ScriptSettings = Field(description="General settings for this python script", default=ScriptSettings())
+    mqtt: MqttSettings = Field(default=MqttSettings(), description="Settings for the MQTT broker connection")
+    script: ScriptSettings = Field(default=ScriptSettings(), description="General settings for this python script")
     sensors: SensorsMonitoringSettings = Field(
-        description="Settings for monitoring sensors", default=SensorsMonitoringSettings()
+        default=SensorsMonitoringSettings(), description="Settings for monitoring sensors"
     )

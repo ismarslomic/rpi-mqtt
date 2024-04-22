@@ -4,9 +4,10 @@
 
 - `mqtt.pub` - utilities for publishing Rpi sensors to MQTT topics
 - `mqtt.sub` - utilities for subscribing to MQTT topics
-- `rpi` - utilities for reading Rpi sensors
+- `sensors` - modules to read Rpi sensor data
 
 ## Installation
+
 ```bash
 # Clone this git repo
 git clone https://github.com/ismarslomic/rpi-mqtt.git
@@ -27,9 +28,14 @@ poetry install --without dev --no-root
 
 # Run python program
 cd src
-python3 -m rpi.main
+python3 -m sensors.main -s /Users/john/rpi-mqtt/settings.yml
 ```
 
+## User settings
+
+You can provide user settings by providing a `settings.yml` file according to the JSON
+schema [settings.json](docs/settings.json) or markdown [settings.md](docs/settings.md).
 
 ## Development
+
 Read [DEVELOPMENT.md](DEVELOPMENT.md) for more information about how to contribute.

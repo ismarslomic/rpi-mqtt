@@ -115,55 +115,109 @@
       "properties": {
         "boot_loader": {
           "default": true,
-          "description": "Enable monitoring of the boot loader",
+          "description": "Enable the bootloader sensor",
           "title": "Boot Loader",
           "type": "boolean"
         },
-        "cpu": {
+        "cpu_use": {
           "default": true,
-          "description": "Enable monitoring of the CPU",
-          "title": "Cpu",
+          "description": "Enable the CPU usage sensor",
+          "title": "Cpu Use",
+          "type": "boolean"
+        },
+        "cpu_load": {
+          "default": true,
+          "description": "Enable the CPU load sensor",
+          "title": "Cpu Load",
           "type": "boolean"
         },
         "disk": {
           "default": true,
-          "description": "Enable monitoring of the disk",
+          "description": "Enable the disk usage sensor",
           "title": "Disk",
           "type": "boolean"
         },
         "fan": {
           "default": true,
-          "description": "Enable monitoring of the fan",
+          "description": "Enable the fan speed sensor",
           "title": "Fan",
           "type": "boolean"
         },
         "memory": {
           "default": true,
-          "description": "Enable monitoring of the memory",
+          "description": "Enable the memory usage sensor",
           "title": "Memory",
           "type": "boolean"
         },
-        "network": {
+        "rpi_model": {
           "default": true,
-          "description": "Enable monitoring of the network",
-          "title": "Network",
+          "description": "Enable the Rpi model sensor",
+          "title": "Rpi Model",
           "type": "boolean"
         },
-        "os": {
+        "ip_address": {
           "default": true,
-          "description": "Enable monitoring of the os",
-          "title": "Os",
+          "description": "Enable the IP address sensor",
+          "title": "Ip Address",
+          "type": "boolean"
+        },
+        "hostname": {
+          "default": true,
+          "description": "Enable the hostname sensor",
+          "title": "Hostname",
+          "type": "boolean"
+        },
+        "ethernet_mac_address": {
+          "default": true,
+          "description": "Enable the ethernet mac address sensor",
+          "title": "Ethernet Mac Address",
+          "type": "boolean"
+        },
+        "wifi_mac_address": {
+          "default": true,
+          "description": "Enable the wifi mac address sensor",
+          "title": "Wifi Mac Address",
+          "type": "boolean"
+        },
+        "wifi_connection": {
+          "default": true,
+          "description": "Enable the wifi connection info sensor",
+          "title": "Wifi Connection",
+          "type": "boolean"
+        },
+        "os_kernel": {
+          "default": true,
+          "description": "Enable the os kernel sensor",
+          "title": "Os Kernel",
+          "type": "boolean"
+        },
+        "os_release": {
+          "default": true,
+          "description": "Enable the os release sensor",
+          "title": "Os Release",
+          "type": "boolean"
+        },
+        "available_updates": {
+          "default": true,
+          "description": "Enable the available updates sensor",
+          "title": "Available Updates",
+          "type": "boolean"
+        },
+        "boot_time": {
+          "default": true,
+          "description": "Enable the boot time sensor",
+          "title": "Boot Time",
           "type": "boolean"
         },
         "temperature": {
           "default": true,
-          "description": "Enable monitoring of the temperatures",
+          "description": "Enable the temperature sensor",
           "title": "Temperature",
           "type": "boolean"
         },
         "throttle": {
           "default": true,
-          "description": "Enable monitoring of the throttling",
+          "description": "Enable the throttling sensor",
           "title": "Throttle",
           "type": "boolean"
         }
@@ -208,12 +262,21 @@
       ],
       "default": {
         "boot_loader": true,
-        "cpu": true,
+        "cpu_use": true,
+        "cpu_load": true,
         "disk": true,
         "fan": true,
         "memory": true,
-        "network": true,
-        "os": true,
+        "rpi_model": true,
+        "ip_address": true,
+        "hostname": true,
+        "ethernet_mac_address": true,
+        "wifi_mac_address": true,
+        "wifi_connection": true,
+        "os_kernel": true,
+        "os_release": true,
+        "available_updates": true,
+        "boot_time": true,
         "temperature": true,
         "throttle": true
       },

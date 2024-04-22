@@ -16,8 +16,8 @@ script:
 
 # Override only few of default properties
 sensors:
-  boot_loader: false
-  cpu: False
-  disk: false
-  memory: false
-  network: True
+  boot_loader: False
+  cpu_use: False
+  disk: False
+  memory: False
+  ethernet_mac_address: False
