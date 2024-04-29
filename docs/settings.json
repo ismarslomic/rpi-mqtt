@@ -1,5 +1,20 @@
 {
   "$defs": {
+    "LogLevel": {
+      "description": "Enum for available log levels",
+      "enum": [
+        "CRITICAL",
+        "FATAL",
+        "ERROR",
+        "WARNING",
+        "WARNING",
+        "INFO",
+        "DEBUG",
+        "NOTSET"
+      ],
+      "title": "LogLevel",
+      "type": "string"
+    },
     "MqttAuthentication": {
       "description": "Settings for MQTT authentication",
       "properties": {
@@ -65,6 +80,32 @@
           ],
           "default": null,
           "description": "The TLS for encrypted connection to the MQTT broker, if supporter by broker"
+        },
+        "base_topic": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "home/nodes",
+          "description": "The MQTT base topic under which to publish the Raspberry Pi sensor data topics",
+          "title": "Base Topic"
+        },
+        "sensor_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "rpi-{hostname}",
+          "description": "The MQTT name for this Raspberry Pi as a sensor. Defaults to rpi-<rpi hostname>.",
+          "title": "Sensor Name"
         }
       },
       "title": "MqttSettings",
@@ -102,9 +143,18 @@
       "properties": {
         "update_interval": {
           "default": 60,
-          "description": "The interval to update sensor data to the MQTT broker",
+          "description": "The interval in seconds to update sensor data to the MQTT broker",
           "title": "Update Interval",
           "type": "integer"
+        },
+        "log_level": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/LogLevel"
+            }
+          ],
+          "default": "INFO",
+          "description": "The log level of this python script"
         }
       },
       "title": "ScriptSettings",
@@ -239,7 +289,9 @@
         "port": 1883,
         "client_id": "rpi-mqtt",
         "authentication": null,
-        "tls": null
+        "tls": null,
+        "base_topic": "home/nodes",
+        "sensor_name": "rpi-{hostname}"
       },
       "description": "Settings for the MQTT broker connection"
     },
@@ -250,7 +302,8 @@
         }
       ],
       "default": {
-        "update_interval": 60
+        "update_interval": 60,
+        "log_level": "INFO"
       },
       "description": "General settings for this python script"
     },

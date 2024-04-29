@@ -1,10 +1,23 @@
 #!/usr/bin/env python3
 """Main program that reads sensor data and publish to MQTT broker"""
 
+from cli_utils import cli_create_arg_parser
+from log_utils import set_global_log_config
+from mqtt.mqtt_pub_sub import start_pub_sub
 from settings.settings import read_settings
 from settings.types import Settings
 
-SETTINGS_FILE_PATH = "/Users/ismarslomic/src/smarthytte/rpi-mqtt/src/settings.yml"
+if __name__ == "__main__":
+    # Read user settings
+    parser = cli_create_arg_parser()
+    settings_file_path = parser.parse_args().settings_file
+    user_settings: Settings = read_settings(file_path=settings_file_path)
 
-settings: Settings = read_settings(file_path=SETTINGS_FILE_PATH)
-print(settings)
+    # Configure global log settings
+    set_global_log_config(settings=user_settings)
+
+    # all_sensors: list[RpiSensor] = create_sensors(settings=user_settings)
+    # print_sensor_availability(all_sensors)
+
+    # Connect to MQTT and publish & subscribe
+    start_pub_sub(mqtt_settings=user_settings.mqtt, script_settings=user_settings.script)

@@ -2,55 +2,6 @@
 """Interface for Rpi sensors API"""
 import logging
 from abc import ABC, abstractmethod
-from typing import List
-
-
-class CommonLogger(ABC):
-    """Common logger interface, defining functions for logging info, debug and warning messages."""
-
-    @abstractmethod
-    def info(self, msg: str):
-        """Log an info message."""
-
-    @abstractmethod
-    def debug(self, msg: str):
-        """Log a debug message."""
-
-    @abstractmethod
-    def warning(self, msg: str):
-        """Log a warning message."""
-
-
-class SensorLogger(CommonLogger):
-    """Sensor logger class."""
-
-    def __init__(self, sensor: str):
-        self.sensor: str = sensor
-        self.warnings: List[str] = []
-
-    def info(self, msg: str):
-        logging.info(self._get_logging_message(msg))
-
-    def debug(self, msg: str):
-        logging.debug(self._get_logging_message(msg))
-
-    def warning(self, msg: str):
-        logging.warning(self._get_logging_message(msg))
-
-    def configure(self, sensor: str):
-        """Configure logger with the given <sensor>."""
-        self.sensor = sensor
-
-    def _get_logging_message(self, msg: str) -> str:
-        _msg = msg if msg else "<no message>"
-        _sensor = self.sensor if self.sensor else "<none>"
-
-        columns = [
-            "[sensor]",
-            f"[{_sensor}]",
-            _msg,
-        ]
-        return " ".join(columns)
 
 
 class RpiSensor(ABC):
@@ -59,11 +10,12 @@ class RpiSensor(ABC):
     name: str
     """Name of this sensor. Must be unique across all sensors."""
 
-    logger: SensorLogger
+    logger: logging.Logger
 
     def __init__(self, enabled: bool):
         self._enabled = enabled
-        self.logger = SensorLogger(self.name)
+        logger_name: str = f"{__name__}.{self.name}"
+        self.logger = logging.getLogger(logger_name)
 
         try:
             self.read()

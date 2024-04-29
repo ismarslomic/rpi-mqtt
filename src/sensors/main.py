@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Service for reading all Rpi sensors and returning summary of all"""
+
 import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from json import JSONEncoder
 from typing import List
 
-from cli_utils import cli_create_arg_parser
-from log_utils import set_global_log_config
 from sensors.bootloader.sensor import BootloaderSensor
 from sensors.bootloader.types import BootloaderVersion
 from sensors.cpu.sensor import CpuLoadAvgSensor, CpuUsePctSensor
@@ -33,16 +32,7 @@ from sensors.temperature.types import HwTemperature
 from sensors.throttle.sensor import ThrottledSensor
 from sensors.throttle.types import SystemThrottleStatus
 from sensors.types import RpiSensor
-from settings.settings import read_settings
 from settings.types import Settings
-
-# Read user settings
-parser = cli_create_arg_parser()
-settings_file_path = parser.parse_args().settings_file
-user_settings: Settings = read_settings(file_path=settings_file_path)
-
-# Configure logging
-set_global_log_config(settings=user_settings)
 
 
 @dataclass
@@ -151,8 +141,3 @@ def print_sensor_availability(sensors: list[RpiSensor]):
         if hasattr(s, "enabled"):
             print(f"Enabled: {s.enabled()}")
         print()
-
-
-if __name__ == "__main__":
-    all_sensors: list[RpiSensor] = create_sensors(settings=user_settings)
-    print_sensor_availability(all_sensors)

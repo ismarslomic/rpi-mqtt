@@ -11,7 +11,7 @@ from sensors.types import RpiSensor, SensorNotAvailableException
 class ThrottledSensor(RpiSensor):
     """Sensor for thermal throttling"""
 
-    name: str = "Throttled"
+    name: str = "throttled"
 
     def read(self) -> SystemThrottleStatus:
         self.logger.debug("Reading sensor data")
@@ -31,7 +31,7 @@ class ThrottledSensor(RpiSensor):
 
         if result.returncode != 0:
             self.logger.warning(
-                f"Process 'vcgencmd get_throttled' returned code {str(result.returncode)}: {str(result.stderr)}"
+                "Process 'vcgencmd get_throttled' returned code %s: %s", str(result.returncode), str(result.stderr)
             )
             raise SensorNotAvailableException("Failed to read throttled state", result.stderr)
 
@@ -61,7 +61,7 @@ class ThrottledSensor(RpiSensor):
         if len(raw_list) > 1:
             return raw_list[1]
 
-        self.logger.warning(f"List size is not >1, size={str(len(raw_list))}")
+        self.logger.warning("List size is not >1, size=%d", len(raw_list))
         return None
 
     @staticmethod

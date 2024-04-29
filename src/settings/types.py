@@ -37,6 +37,14 @@ class MqttSettings(BaseModel):
     tls: Optional[MqttTlsSettings] = Field(
         default=None, description="The TLS for encrypted connection to the MQTT broker, if supporter by broker"
     )
+    base_topic: Optional[str] = Field(
+        default="home/nodes",
+        description="The MQTT base topic under which to publish the Raspberry Pi sensor data topics",
+    )
+    sensor_name: Optional[str] = Field(
+        default="rpi-{hostname}",
+        description="The MQTT name for this Raspberry Pi as a sensor. Defaults to rpi-<rpi hostname>.",
+    )
 
 
 class LogLevel(str, Enum):
@@ -55,7 +63,9 @@ class LogLevel(str, Enum):
 class ScriptSettings(BaseModel):
     """General settings for this python script"""
 
-    update_interval: int = Field(default=60, description="The interval to update sensor data to the MQTT broker")
+    update_interval: int = Field(
+        default=60, description="The interval in seconds to update sensor data to the MQTT broker"
+    )
     log_level: LogLevel = Field(default=LogLevel.INFO, description="The log level of this python script")
 
 

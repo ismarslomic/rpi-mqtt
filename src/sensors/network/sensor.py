@@ -13,7 +13,7 @@ from sensors.types import RpiSensor, SensorNotAvailableException
 class IpAddressSensor(RpiSensor):
     """Sensor for IP address"""
 
-    name: str = "Ip address"
+    name: str = "ip_addr"
 
     def read(self) -> str:
         self.logger.debug("Reading sensor data")
@@ -39,7 +39,7 @@ class IpAddressSensor(RpiSensor):
 class HostnameSensor(RpiSensor):
     """Sensor for hostname"""
 
-    name: str = "Hostname"
+    name: str = "hostname"
 
     def read(self) -> str:
         self.logger.debug("Reading sensor data")
@@ -64,7 +64,7 @@ class HostnameSensor(RpiSensor):
 class EthernetMacAddressSensor(RpiSensor):
     """Sensor for Ethernet Mac address"""
 
-    name: str = "Ethernet mac address"
+    name: str = "eth_mac_addr"
 
     def read(self) -> str:
         self.logger.debug("Reading sensor data")
@@ -86,7 +86,7 @@ class EthernetMacAddressSensor(RpiSensor):
 class WifiMacAddressSensor(RpiSensor):
     """Sensor for Wi-Fi Mac address"""
 
-    name: str = "Wifi mac address"
+    name: str = "wifi_mac_addr"
 
     def read(self) -> str:
         self.logger.debug("Reading sensor data")
@@ -107,7 +107,7 @@ class WifiMacAddressSensor(RpiSensor):
 class WifiConnectionSensor(RpiSensor):
     """Sensor for Wi-Fi connection"""
 
-    name: str = "Wifi connection"
+    name: str = "wifi_connection"
 
     def read(self) -> WiFiConnectionInfo:
         self.logger.debug("Reading sensor data")
@@ -126,7 +126,7 @@ class WifiConnectionSensor(RpiSensor):
             raise SensorNotAvailableException("Wi-Fi connection info not available for this Rpi") from err
 
         if result.returncode != 0:
-            self.logger.warning(f"Process 'iw' returned code {str(result.returncode)}: {str(result.stderr)}")
+            self.logger.warning("Process 'iw' returned code %s: %s", str(result.returncode), str(result.stderr))
             raise SensorNotAvailableException("Failed to read Wi-Fi connection", result.stderr)
 
         result_as_list = result.stdout.split("\n")
@@ -154,7 +154,7 @@ class WifiConnectionSensor(RpiSensor):
                 freq = int(item_split[1].strip())
 
         if result == "Not connected." or ssid == "":
-            self.logger.debug(f"Wifi not connected, result='{str(result)}' ssid='{str(ssid)}'")
+            self.logger.debug("Wifi not connected, result='%s' ssid='%s'", str(result), str(ssid))
             status = "off"
 
         return WiFiConnectionInfo(

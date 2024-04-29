@@ -23,4 +23,4 @@ def set_global_log_config(settings: Settings):
         .isoformat(sep="T", timespec="milliseconds")
     )
 
-    logging.basicConfig(format="%(asctime)s [%(levelname)s] %(message)s", level=numeric_level)
+    logging.basicConfig(format="%(asctime)s - %(levelname)s - %(name)s - %(message)s", level=numeric_level)
