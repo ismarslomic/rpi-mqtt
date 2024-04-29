@@ -33,6 +33,14 @@ or
 poetry self update
 ```
 
+Upgrade poetry dependencies
+
+Get the latest versions of the dependencies and to update the `poetry.lock` file
+
+```bash
+poetry update
+```
+
 Start shell
 
 ```bash
