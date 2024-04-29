@@ -10,6 +10,7 @@ from mqtt.mqtt_client import RpiMqttClient
 from mqtt.mqtt_pub import RpiMqttPublisher
 from mqtt.repeat_timer import RepeatTimer
 from sensors.network.sensor import HostnameSensor
+from sensors.types import SensorNotAvailableException
 from settings.types import MqttSettings, ScriptSettings
 
 
@@ -22,7 +23,14 @@ def start_pub_sub(mqtt_settings: MqttSettings, script_settings: ScriptSettings):
     # Sensor name
     sensor_name: str = mqtt_settings.sensor_name.lower()
     if sensor_name == "rpi-{hostname}":
-        sensor_name = f"rpi-{HostnameSensor(enabled=True).read()}"
+        try:
+            hostname = HostnameSensor(enabled=True).read()
+            sensor_name = f"rpi-{hostname}"
+        except SensorNotAvailableException:
+            logger.error(
+                "Not possible to read hostname of this Rpi. Please set the 'mqtt.sensor_name' manually in settings.yml"
+            )
+            sys.exit(130)
 
     # Mqtt Topics
     base_topic: str = mqtt_settings.base_topic.lower()

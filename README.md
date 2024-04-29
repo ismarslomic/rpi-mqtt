@@ -46,6 +46,8 @@ mqtt:
   hostname: 127.0.0.1
   # The TCP port the MQTT broker is listening on. Default: 1883.
   port: 1883
+  # Override the default sensor_name (rpi-<hostname>) with own name of sensor to be used in MQTT topic name.
+  sensor_name: my-macbook
 
 script:
   # The interval to update sensor data to MQTT broker. In seconds. Default: 60.
