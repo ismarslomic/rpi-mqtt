@@ -6,7 +6,7 @@ from sensors.types import RpiSensor, SensorNotAvailableException
 class RpiModelSensor(RpiSensor):
     """Sensor for Rpi model"""
 
-    name: str = "Rpi model"
+    name: str = "rpi_model"
 
     def read(self) -> str:
         self.logger.debug("Reading sensor data")

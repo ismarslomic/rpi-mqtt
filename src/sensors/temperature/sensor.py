@@ -14,7 +14,7 @@ from sensors.utils import round_temp
 class TemperatureSensor(RpiSensor):
     """Sensor for temperature"""
 
-    name: str = "Temperature"
+    name: str = "temperature"
 
     def read(self) -> dict[str, HwTemperature]:
         self.logger.debug("Reading sensor data")
@@ -70,7 +70,7 @@ class TemperatureSensor(RpiSensor):
 
         if result.returncode != 0:
             self.logger.warning(
-                f"Process 'vcgencmd measure_temp' returned code: {str(result.returncode)}, err: {str(result.stderr)}"
+                "Process 'vcgencmd measure_temp' returned code: %s, err: %s", str(result.returncode), str(result.stderr)
             )
             raise SensorNotAvailableException("Failed to read GPU temperature", result.stderr)
 

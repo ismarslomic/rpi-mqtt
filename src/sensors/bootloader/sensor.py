@@ -11,7 +11,7 @@ from sensors.utils import date_and_timestamp_to_iso_datetime
 class BootloaderSensor(RpiSensor):
     """Sensor for bootloader version"""
 
-    name: str = "Bootloader version"
+    name: str = "bootloader_version"
 
     def read(self) -> BootloaderVersion:
         self.logger.debug("Reading sensor data")
@@ -27,12 +27,12 @@ class BootloaderSensor(RpiSensor):
         try:
             result = subprocess.run(args, capture_output=True, text=True, check=False)
         except FileNotFoundError as err:
-            self.logger.warning(f"Failed calling process rpi-eeprom-update: {str(err)}")
+            self.logger.warning("Failed calling process rpi-eeprom-update: %s", str(err))
             raise SensorNotAvailableException("rpi-eeprom-update not available for this Rpi") from err
 
         if result.returncode != 0:
             self.logger.warning(
-                f"Process 'rpi-eeprom-update' returned code {str(result.returncode)}: {str(result.stderr)}"
+                "Process 'rpi-eeprom-update' returned code %s: %s", str(result.returncode), str(result.stderr)
             )
             raise SensorNotAvailableException("Failed to read Rpi bootloader version", result.stderr)
 

@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+"""Main module starting MQTT pub and sub"""
+
+import logging
+import os
+import sys
+from time import sleep
+
+from mqtt.mqtt_client import RpiMqttClient
+from mqtt.mqtt_pub import RpiMqttPublisher
+from mqtt.repeat_timer import RepeatTimer
+from sensors.network.sensor import HostnameSensor
+from settings.types import MqttSettings, ScriptSettings
+
+
+def start_pub_sub(mqtt_settings: MqttSettings, script_settings: ScriptSettings):
+    """Function starting the MQTT pub and sub"""
+
+    # Define logger
+    logger: logging.Logger = logging.getLogger(__name__)
+
+    # Sensor name
+    sensor_name: str = mqtt_settings.sensor_name.lower()
+    if sensor_name == "rpi-{hostname}":
+        sensor_name = f"rpi-{HostnameSensor(enabled=True).read()}"
+
+    # Mqtt Topics
+    base_topic: str = mqtt_settings.base_topic.lower()
+    command_base_topic: str = f"{base_topic}/command/{sensor_name}"
+    lwt_topic_names: list[str] = [
+        f"{base_topic}/sensor/{sensor_name}/status",
+        f"{base_topic}/command/{sensor_name}/status",
+    ]
+
+    logger.info("Publish & Subscribe main script")
+    # publish()
+    # subscribe()
+
+    lwt_update_interval_sec: int = 60
+    sensor_update_interval_sec: int = script_settings.update_interval
+
+    publisher: RpiMqttPublisher | None = None
+    mqtt_client: RpiMqttClient | None = None
+    lwt_update_scheduler: RepeatTimer | None = None
+    sensor_update_scheduler: RepeatTimer | None = None
+
+    # noinspection PyBroadException
+    # pylint: disable=W0718
+    try:
+        # Mqtt client
+        mqtt_client = RpiMqttClient(
+            settings=mqtt_settings, lwt_topic_names=lwt_topic_names, command_base_topic=command_base_topic
+        )
+        mqtt_client.connect_and_loop()
+
+        # Mqtt publisher
+        publisher = RpiMqttPublisher(mqtt_client=mqtt_client, lwt_topics=lwt_topic_names)
+
+        # Publish LWT messages initially and in repeat
+        publisher.pub_online_lwt()
+        lwt_update_scheduler = RepeatTimer(
+            name="lwt_update_scheduler", interval=lwt_update_interval_sec, function=publisher.pub_online_lwt
+        )
+        lwt_update_scheduler.start()
+
+        # Publish sensor data initially and in repeat
+        publisher.pub_sensor_updates()
+        sensor_update_scheduler = RepeatTimer(
+            name="sensor_update_scheduler", interval=sensor_update_interval_sec, function=publisher.pub_sensor_updates
+        )
+        sensor_update_scheduler.start()
+
+        while True:
+            sleep(10000)
+    except Exception:
+        logger.error("Exception occurred", exc_info=True)
+    finally:
+        if publisher is not None:
+            publisher.pub_offline_lwt()
+
+        if lwt_update_scheduler is not None:
+            lwt_update_scheduler.cancel()
+
+        if sensor_update_scheduler is not None:
+            sensor_update_scheduler.cancel()
+
+        # Disconnect from MQTT and stop the background thread running loop()
+        if mqtt_client is not None:
+            mqtt_client.disconnect()
+            logger.info("Disconnected from MQTT broker")
+
+        try:
+            logger.info("Exiting system with code 130")
+            sys.exit(130)
+        except SystemExit:
+            logger.info("Exiting os with code 130")
+            # noinspection PyUnresolvedReferences,PyProtectedMember
+            os._exit(130)

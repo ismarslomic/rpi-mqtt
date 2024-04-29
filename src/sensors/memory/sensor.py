@@ -12,7 +12,7 @@ from sensors.utils import bytes_to_gibibytes, round_percent
 class MemoryUseSensor(RpiSensor):
     """Sensor for memory usage"""
 
-    name: str = "Memory use"
+    name: str = "memory_use"
 
     def read(self) -> MemoryUse:
         self.logger.debug("Reading sensor data")

@@ -25,16 +25,41 @@ keyring --disable
 
 # Install required python packages defined in pyproject.toml
 poetry install --without dev --no-root
+```
 
+## Usage
+
+```bash
 # Run python program
 cd src
 python3 -m sensors.main -s /Users/john/rpi-mqtt/settings.yml
 ```
 
-## User settings
-
 You can provide user settings by providing a `settings.yml` file according to the JSON
 schema [settings.json](docs/settings.json) or markdown [settings.md](docs/settings.md).
+
+Example `settings.yml`:
+
+```yaml
+mqtt:
+  # The hostname or IP address of the MQTT broker to connect to. Default 127.0.0.1.
+  hostname: 127.0.0.1
+  # The TCP port the MQTT broker is listening on. Default: 1883.
+  port: 1883
+
+script:
+  # The interval to update sensor data to MQTT broker. In seconds. Default: 60.
+  update_interval: 120
+  # The log level for the python script. Default: INFO.
+  log_level: DEBUG
+
+# Override default settings by enabling (true) or disabling (false) sensors you want to be published to MQTT broker
+sensors:
+  boot_loader: False
+  cpu: True
+  disk: True
+  fan: False
+```
 
 ## Development
 

@@ -13,7 +13,7 @@ from sensors.utils import bytes_to_gibibytes, round_percent
 class DiskUseSensor(RpiSensor):
     """Sensor for disk usage"""
 
-    name: str = "Disk use"
+    name: str = "disk_use"
 
     def read(self) -> DiskUse:
         self.logger.debug("Reading sensor data")

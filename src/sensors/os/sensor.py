@@ -20,7 +20,7 @@ except ImportError:
 class OsKernelSensor(RpiSensor):
     """Sensor for OS kernel"""
 
-    name: str = "Os kernel"
+    name: str = "os_kernel"
 
     def read(self) -> str:
         self.logger.debug("Reading sensor data")
@@ -39,7 +39,7 @@ class OsKernelSensor(RpiSensor):
             raise SensorNotAvailableException("os kernel info not available for this Rpi") from err
 
         if result.returncode != 0:
-            self.logger.warning(f"Process 'uname' returned code {str(result.returncode)}: {str(result.stderr)}")
+            self.logger.warning("Process 'uname' returned code %s: %s", str(result.returncode), str(result.stderr))
             raise SensorNotAvailableException("Failed to read OS kernel version", result.stderr)
 
         os_kernel = result.stdout.replace("\n", "")
@@ -51,7 +51,7 @@ class OsKernelSensor(RpiSensor):
 class OsReleaseSensor(RpiSensor):
     """Sensor for OS release"""
 
-    name: str = "Os release"
+    name: str = "os_release"
 
     def read(self) -> str:
         self.logger.debug("Reading sensor data")
@@ -76,7 +76,7 @@ class OsReleaseSensor(RpiSensor):
 class AvailableUpdatesSensor(RpiSensor):
     """Sensor for available updates"""
 
-    name: str = "Available updates"
+    name: str = "available_updates"
 
     def read(self) -> int:
         self.logger.debug("Reading sensor data")
@@ -107,7 +107,7 @@ class AvailableUpdatesSensor(RpiSensor):
 class BootTimeSensor(RpiSensor):
     """Sensor for boot time of Rpi"""
 
-    name: str = "Boot time"
+    name: str = "boot_time"
 
     def read(self) -> str:
         self.logger.debug("Reading sensor data")

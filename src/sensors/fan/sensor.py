@@ -9,7 +9,7 @@ from sensors.types import RpiSensor, SensorNotAvailableException
 class FanSpeedSensor(RpiSensor):
     """Sensor for fan speed"""
 
-    name: str = "Fan speed"
+    name: str = "fan_speed"
 
     def read(self) -> dict[str, FanSpeed]:
         self.logger.debug("Reading sensor data")

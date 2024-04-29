@@ -11,7 +11,7 @@ from sensors.utils import round_percent
 class CpuUsePctSensor(RpiSensor):
     """Sensor for CPU usage in percent"""
 
-    name: str = "CPU use percent"
+    name: str = "cpu_use_pct"
 
     def read(self) -> float:
         self.logger.debug("Reading sensor data")
@@ -36,7 +36,7 @@ class CpuUsePctSensor(RpiSensor):
 class CpuLoadAvgSensor(RpiSensor):
     """Sensor for CPU load in average"""
 
-    name: str = "CPU load average"
+    name: str = "cpu_load_avg"
 
     def read(self) -> LoadAverage:
         self.logger.debug("Reading sensor data")
