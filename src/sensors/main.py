@@ -52,6 +52,7 @@ def create_sensors(settings: Settings) -> List[RpiSensor]:
 class AllRpiSensors:
     """Class representing all sensors"""
 
+    # Disable Too few public methods (1/2)
     # pylint: disable=R0903
 
     sensors: List[RpiSensor]
@@ -64,7 +65,7 @@ class AllRpiSensors:
         sensors_as_dict: OrderedDict = OrderedDict()
         for sensor in self.sensors:
             if sensor.available():
-                sensors_as_dict[sensor.name] = sensor.refresh_state()
+                sensors_as_dict[sensor.name] = sensor.state_as_dict
         return sensors_as_dict
 
 

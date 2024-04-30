@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Interface for Rpi sensors API"""
+
 import logging
 from abc import ABC, abstractmethod
 
@@ -20,6 +21,14 @@ class RpiSensor(ABC):
     def state(self) -> object | None:
         """Get the current state for this sensor."""
         raise NotImplementedError("Property get state must be implemented in sensor sub-class.")
+
+    @property
+    def state_as_dict(self) -> dict | float | int | str | None:
+        """Get the current state for this sensor as dictionary or plain value. Useful for JSON serializing."""
+        if hasattr(self.state, "__dict__"):
+            return vars(self.state)
+
+        return self.state
 
     def __init__(self, enabled: bool):
         self._enabled = enabled
