@@ -14,11 +14,20 @@ from sensors.utils import round_temp
 class TemperatureSensor(RpiSensor):
     """Sensor for temperature"""
 
-    name: str = "temperature"
+    _state: dict[str, HwTemperature] | None = None
 
-    def read(self) -> dict[str, HwTemperature]:
-        self.logger.debug("Reading sensor data")
-        return self._read_temperature()
+    @property
+    def name(self) -> str:
+        return "temperature"
+
+    @property
+    def state(self) -> dict[str, HwTemperature] | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_temperature()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_temperature(self) -> dict[str, HwTemperature]:
         """Read available temperatures for hardware components, such as for CPU and GPU"""
@@ -27,7 +36,6 @@ class TemperatureSensor(RpiSensor):
         gpu_temp = self._read_gpu_temperature()
         temps["gpu"] = gpu_temp
 
-        self.logger.debug("Reading sensor data successfully")
         return temps
 
     def _read_temperatures(self) -> dict[str, HwTemperature]:

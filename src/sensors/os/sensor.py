@@ -20,11 +20,20 @@ except ImportError:
 class OsKernelSensor(RpiSensor):
     """Sensor for OS kernel"""
 
-    name: str = "os_kernel"
+    _state: str | None = None
 
-    def read(self) -> str:
-        self.logger.debug("Reading sensor data")
-        return self._read_rpi_os_kernel()
+    @property
+    def name(self) -> str:
+        return "os_kernel"
+
+    @property
+    def state(self) -> str | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_rpi_os_kernel()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_rpi_os_kernel(self) -> str:
         """Read OS kernel version"""
@@ -43,7 +52,6 @@ class OsKernelSensor(RpiSensor):
             raise SensorNotAvailableException("Failed to read OS kernel version", result.stderr)
 
         os_kernel = result.stdout.replace("\n", "")
-        self.logger.debug("Reading sensor data successfully")
 
         return os_kernel
 
@@ -51,11 +59,20 @@ class OsKernelSensor(RpiSensor):
 class OsReleaseSensor(RpiSensor):
     """Sensor for OS release"""
 
-    name: str = "os_release"
+    _state: str | None = None
 
-    def read(self) -> str:
-        self.logger.debug("Reading sensor data")
-        return self._read_os_release()
+    @property
+    def name(self) -> str:
+        return "os_release"
+
+    @property
+    def state(self) -> str | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_os_release()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_os_release(self) -> str:
         """Read OS release"""
@@ -66,7 +83,6 @@ class OsReleaseSensor(RpiSensor):
             with open(release_file_name, "r", encoding="utf-8") as f:
                 release = f.readline().replace("PRETTY_NAME=", "").replace("\n", "").replace('"', "").strip()
 
-            self.logger.debug("Reading sensor data successfully")
             return release
         except Exception as err:
             self.logger.warning("Ip address file not available for this Rpi")
@@ -76,11 +92,20 @@ class OsReleaseSensor(RpiSensor):
 class AvailableUpdatesSensor(RpiSensor):
     """Sensor for available updates"""
 
-    name: str = "available_updates"
+    _state: int | None = None
 
-    def read(self) -> int:
-        self.logger.debug("Reading sensor data")
-        return self._read_number_of_available_updates()
+    @property
+    def name(self) -> str:
+        return "available_updates"
+
+    @property
+    def state(self) -> int | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_number_of_available_updates()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_number_of_available_updates(self) -> int:
         """Read number of available package updates (using apt),
@@ -96,7 +121,6 @@ class AvailableUpdatesSensor(RpiSensor):
             changes = cache.get_changes()
 
             # Return number of changes
-            self.logger.debug("Reading sensor data successfully")
             return len(changes)
 
         # apt not available
@@ -107,11 +131,20 @@ class AvailableUpdatesSensor(RpiSensor):
 class BootTimeSensor(RpiSensor):
     """Sensor for boot time of Rpi"""
 
-    name: str = "boot_time"
+    _state: str | None = None
 
-    def read(self) -> str:
-        self.logger.debug("Reading sensor data")
-        return self._read_rpi_boot_time()
+    @property
+    def name(self) -> str:
+        return "boot_time"
+
+    @property
+    def state(self) -> str | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_rpi_boot_time()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_rpi_boot_time(self) -> str:
         """Return the Rpi boot time. Example: '2024-01-22T12:51:19+00:00'"""
@@ -123,5 +156,4 @@ class BootTimeSensor(RpiSensor):
         boot_time_seconds: float = psutil.boot_time()
         boot_time_iso_datetime: str = epoch_to_iso_datetime(timestamp=boot_time_seconds)
 
-        self.logger.debug("Reading sensor data successfully")
         return boot_time_iso_datetime

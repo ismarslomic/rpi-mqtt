@@ -9,12 +9,20 @@ from sensors.types import RpiSensor, SensorNotAvailableException
 class FanSpeedSensor(RpiSensor):
     """Sensor for fan speed"""
 
-    name: str = "fan_speed"
+    _state: dict[str, FanSpeed] | None = None
 
-    def read(self) -> dict[str, FanSpeed]:
-        self.logger.debug("Reading sensor data")
+    @property
+    def name(self) -> str:
+        return "fan_speed"
 
-        return self._read_fans_speed()
+    @property
+    def state(self) -> dict[str, FanSpeed] | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_fans_speed()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_fans_speed(self) -> dict[str, FanSpeed]:
         """Read Rpi hardware fans speed
@@ -50,7 +58,5 @@ class FanSpeedSensor(RpiSensor):
             for fan_measurement in fan_measurements:
                 name: str = fan_measurement.label or fan_name
                 fans_speed[name] = FanSpeed(curr_speed_rpm=fan_measurement.current)
-
-        self.logger.debug("Reading sensor data successfully")
 
         return fans_speed

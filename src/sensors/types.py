@@ -7,10 +7,19 @@ from abc import ABC, abstractmethod
 class RpiSensor(ABC):
     """Abstract base class for Rpi sensors, defining the common API."""
 
-    name: str
-    """Name of this sensor. Must be unique across all sensors."""
-
     logger: logging.Logger
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """Name of this sensor. Must be unique across all sensors."""
+        raise NotImplementedError("Property name must be implemented in sensor sub-class.")
+
+    @property
+    @abstractmethod
+    def state(self) -> object | None:
+        """Get the current state for this sensor."""
+        raise NotImplementedError("Property get state must be implemented in sensor sub-class.")
 
     def __init__(self, enabled: bool):
         self._enabled = enabled
@@ -18,14 +27,14 @@ class RpiSensor(ABC):
         self.logger = logging.getLogger(logger_name)
 
         try:
-            self.read()
+            self.refresh_state()
             self._available = True
         except SensorNotAvailableException:
             self._available = False
 
     @abstractmethod
-    def read(self) -> object:
-        """Returning the latest state of the sensor."""
+    def refresh_state(self) -> None:
+        """Refresh current state of this sensor and update the state property."""
 
         raise NotImplementedError("read() must be implemented in sensor sub-class.")
 

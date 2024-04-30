@@ -13,11 +13,20 @@ from sensors.types import RpiSensor, SensorNotAvailableException
 class IpAddressSensor(RpiSensor):
     """Sensor for IP address"""
 
-    name: str = "ip_addr"
+    _state: str | None = None
 
-    def read(self) -> str:
-        self.logger.debug("Reading sensor data")
-        return self._read_ip()
+    @property
+    def name(self) -> str:
+        return "ip_addr"
+
+    @property
+    def state(self) -> str | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_ip()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_ip(self) -> str:
         """Read Rpi IP"""
@@ -29,7 +38,6 @@ class IpAddressSensor(RpiSensor):
                 tcp_content = f.read().strip("\x00")
                 ip = _parse_ip_from_tcp_content(tcp_content)
 
-                self.logger.debug("Reading sensor data successfully")
                 return ip
         except Exception as err:
             self.logger.warning("Ip address file not available for this Rpi")
@@ -39,11 +47,20 @@ class IpAddressSensor(RpiSensor):
 class HostnameSensor(RpiSensor):
     """Sensor for hostname"""
 
-    name: str = "hostname"
+    _state: str | None = None
 
-    def read(self) -> str:
-        self.logger.debug("Reading sensor data")
-        return self._read_hostname()
+    @property
+    def name(self) -> str:
+        return "hostname"
+
+    @property
+    def state(self) -> str | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_hostname()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_hostname(self) -> str:
         """Read Rpi hostname"""
@@ -54,7 +71,6 @@ class HostnameSensor(RpiSensor):
             with open(host_name_file_name, "r", encoding="utf-8") as f:
                 hostname = f.readline().strip()
 
-                self.logger.debug("Reading sensor data successfully")
                 return hostname
         except Exception as err:
             self.logger.warning("Hostname file not available for this Rpi")
@@ -64,11 +80,20 @@ class HostnameSensor(RpiSensor):
 class EthernetMacAddressSensor(RpiSensor):
     """Sensor for Ethernet Mac address"""
 
-    name: str = "eth_mac_addr"
+    _state: str | None = None
 
-    def read(self) -> str:
-        self.logger.debug("Reading sensor data")
-        return self._read_ethernet_mac_address()
+    @property
+    def name(self) -> str:
+        return "eth_mac_addr"
+
+    @property
+    def state(self) -> str | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_ethernet_mac_address()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_ethernet_mac_address(self) -> str:
         """Read the RPI mac address of the ethernet (eth0) network interface"""
@@ -76,7 +101,6 @@ class EthernetMacAddressSensor(RpiSensor):
         try:
             mac_address = _read_mac_address_for_interface("eth0")
 
-            self.logger.debug("Reading sensor data successfully")
             return mac_address
         except SensorNotAvailableException as err:
             self.logger.warning("Ethernet mac address not available for this Rpi")
@@ -86,18 +110,26 @@ class EthernetMacAddressSensor(RpiSensor):
 class WifiMacAddressSensor(RpiSensor):
     """Sensor for Wi-Fi Mac address"""
 
-    name: str = "wifi_mac_addr"
+    _state: str | None = None
 
-    def read(self) -> str:
-        self.logger.debug("Reading sensor data")
-        return self._read_wifi_mac_address()
+    @property
+    def name(self) -> str:
+        return "wifi_mac_addr"
+
+    @property
+    def state(self) -> str | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_wifi_mac_address()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_wifi_mac_address(self) -> str:
         """Read the RPI mac address of the Wi-Fi (wlan0) network interface"""
         try:
             mac_address = _read_wifi_mac_address()
 
-            self.logger.debug("Reading sensor data successfully")
             return mac_address
         except SensorNotAvailableException as err:
             self.logger.warning("Wifi mac address not available for this Rpi")
@@ -107,11 +139,20 @@ class WifiMacAddressSensor(RpiSensor):
 class WifiConnectionSensor(RpiSensor):
     """Sensor for Wi-Fi connection"""
 
-    name: str = "wifi_connection"
+    _state: WiFiConnectionInfo | None = None
 
-    def read(self) -> WiFiConnectionInfo:
-        self.logger.debug("Reading sensor data")
-        return self._read_wifi_connection()
+    @property
+    def name(self) -> str:
+        return "wifi_connection"
+
+    @property
+    def state(self) -> WiFiConnectionInfo | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_wifi_connection()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_wifi_connection(self) -> WiFiConnectionInfo:
         """Read Wi-Fi connection, such as ssid and signal strength"""

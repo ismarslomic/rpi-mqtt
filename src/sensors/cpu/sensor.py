@@ -11,12 +11,20 @@ from sensors.utils import round_percent
 class CpuUsePctSensor(RpiSensor):
     """Sensor for CPU usage in percent"""
 
-    name: str = "cpu_use_pct"
+    _state: float | None = None
 
-    def read(self) -> float:
-        self.logger.debug("Reading sensor data")
+    @property
+    def name(self) -> str:
+        return "cpu_use_pct"
 
-        return self._read_cpu_use_percent()
+    @property
+    def state(self) -> float | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_cpu_use_percent()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_cpu_use_percent(self) -> float:
         """Return a float representing the current system-wide CPU utilization as a percentage"""
@@ -28,20 +36,26 @@ class CpuUsePctSensor(RpiSensor):
 
         cpu_use_percent: float = psutil.cpu_percent(interval=0.1)
 
-        self.logger.debug("Reading sensor data successfully")
-
         return cpu_use_percent
 
 
 class CpuLoadAvgSensor(RpiSensor):
     """Sensor for CPU load in average"""
 
-    name: str = "cpu_load_avg"
+    _state: LoadAverage | None = None
 
-    def read(self) -> LoadAverage:
-        self.logger.debug("Reading sensor data")
+    @property
+    def name(self) -> str:
+        return "cpu_load_avg"
 
-        return self._read_load_average()
+    @property
+    def state(self) -> LoadAverage | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_load_average()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_load_average(self) -> LoadAverage:
         """Return the average system load in percent related to number of cpu cores over the last 1, 5 and 15 minutes"""
@@ -58,8 +72,6 @@ class CpuLoadAvgSensor(RpiSensor):
         cpu_cores: int = psutil.cpu_count()
         load_avg: tuple[float, float, float] = psutil.getloadavg()
         load_avg_percent: list[float] = [x / cpu_cores * 100 for x in load_avg]
-
-        self.logger.debug("Reading sensor data successfully")
 
         return LoadAverage(
             cpu_cores=cpu_cores,

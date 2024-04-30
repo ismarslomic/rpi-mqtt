@@ -12,12 +12,20 @@ from sensors.utils import bytes_to_gibibytes, round_percent
 class MemoryUseSensor(RpiSensor):
     """Sensor for memory usage"""
 
-    name: str = "memory_use"
+    _state: MemoryUse | None = None
 
-    def read(self) -> MemoryUse:
-        self.logger.debug("Reading sensor data")
+    @property
+    def name(self) -> str:
+        return "memory_use"
 
-        return self._read_memory_use()
+    @property
+    def state(self) -> MemoryUse | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_memory_use()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_memory_use(self) -> MemoryUse:
         """Read statistics about system memory usage"""
@@ -28,8 +36,6 @@ class MemoryUseSensor(RpiSensor):
             raise SensorNotAvailableException("virtual_memory() not available for this Rpi")
 
         memory: namedtuple = psutil.virtual_memory()
-
-        self.logger.debug("Reading sensor data successfully")
 
         return MemoryUse(
             total_gib=bytes_to_gibibytes(memory.total),

@@ -6,12 +6,20 @@ from sensors.types import RpiSensor, SensorNotAvailableException
 class RpiModelSensor(RpiSensor):
     """Sensor for Rpi model"""
 
-    name: str = "rpi_model"
+    _state: str | None = None
 
-    def read(self) -> str:
-        self.logger.debug("Reading sensor data")
+    @property
+    def name(self) -> str:
+        return "rpi_model"
 
-        return self._read_rpi_model()
+    @property
+    def state(self) -> str | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_rpi_model()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_rpi_model(self) -> str:
         """Read Rpi model"""
@@ -21,8 +29,6 @@ class RpiModelSensor(RpiSensor):
         try:
             with open(model_file_name, "r", encoding="utf-8") as f:
                 model = f.readline().strip("\x00")
-
-            self.logger.debug("Reading sensor data successfully")
 
             return model
         except FileNotFoundError as err:
