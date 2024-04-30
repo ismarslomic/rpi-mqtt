@@ -26,7 +26,9 @@ def test_read_bootloader_version_up_to_date(mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    bootloader_version: BootloaderVersion = BootloaderSensor(enabled=True).read()
+    bootloader_sensor = BootloaderSensor(enabled=True)
+    bootloader_sensor.refresh_state()
+    bootloader_version: BootloaderVersion = bootloader_sensor.state
 
     # Assert
     assert "up to date" == bootloader_version.status
@@ -51,7 +53,9 @@ def test_read_bootloader_version_update_available(mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    bootloader_version: BootloaderVersion = BootloaderSensor(enabled=True).read()
+    bootloader_sensor = BootloaderSensor(enabled=True)
+    bootloader_sensor.refresh_state()
+    bootloader_version: BootloaderVersion = bootloader_sensor.state
 
     # Assert
     assert "update available" == bootloader_version.status
@@ -63,7 +67,7 @@ def test_read_bootloader_version_update_available(mock_run):
 def test_read_bootloader_not_available_for_platform(_):
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        BootloaderSensor(enabled=True).read()
+        BootloaderSensor(enabled=True).refresh_state()
 
     # Assert error message
     assert "rpi-eeprom-update not available for this Rpi" in str(exec_info)

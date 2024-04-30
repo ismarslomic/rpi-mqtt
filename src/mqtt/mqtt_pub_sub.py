@@ -14,6 +14,25 @@ from sensors.types import SensorNotAvailableException
 from settings.types import MqttSettings, ScriptSettings
 
 
+def _sensor_name(mqtt_settings: MqttSettings, logger: logging.Logger) -> str:
+    sensor_name: str = mqtt_settings.sensor_name.lower()
+
+    if sensor_name == "rpi-{hostname}":
+        try:
+            hostname_sensor = HostnameSensor(enabled=True)
+            hostname_sensor.refresh_state()
+            hostname = hostname_sensor.state
+
+            sensor_name = f"rpi-{hostname}"
+        except SensorNotAvailableException:
+            logger.error(
+                "Not possible to read hostname of this Rpi. Please set the 'mqtt.sensor_name' manually in settings.yml"
+            )
+            sys.exit(130)
+
+    return sensor_name
+
+
 def start_pub_sub(mqtt_settings: MqttSettings, script_settings: ScriptSettings):
     """Function starting the MQTT pub and sub"""
 
@@ -21,16 +40,7 @@ def start_pub_sub(mqtt_settings: MqttSettings, script_settings: ScriptSettings):
     logger: logging.Logger = logging.getLogger(__name__)
 
     # Sensor name
-    sensor_name: str = mqtt_settings.sensor_name.lower()
-    if sensor_name == "rpi-{hostname}":
-        try:
-            hostname = HostnameSensor(enabled=True).read()
-            sensor_name = f"rpi-{hostname}"
-        except SensorNotAvailableException:
-            logger.error(
-                "Not possible to read hostname of this Rpi. Please set the 'mqtt.sensor_name' manually in settings.yml"
-            )
-            sys.exit(130)
+    sensor_name: str = _sensor_name(mqtt_settings=mqtt_settings, logger=logger)
 
     # Mqtt Topics
     base_topic: str = mqtt_settings.base_topic.lower()

@@ -17,7 +17,9 @@ def test_read_throttle_status_not_throttled(mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    throttled_status: SystemThrottleStatus = ThrottledSensor(enabled=True).read()
+    throttled_sensor = ThrottledSensor(enabled=True)
+    throttled_sensor.refresh_state()
+    throttled_status: SystemThrottleStatus = throttled_sensor.state
 
     # Assert
     assert "0x0" == throttled_status.status_hex
@@ -33,7 +35,9 @@ def test_read_throttle_status_throttled_under_voltage(mock_run):
     mock_run.return_value = mock_proc
 
     # Call function
-    throttled_status: SystemThrottleStatus = ThrottledSensor(enabled=True).read()
+    throttled_sensor = ThrottledSensor(enabled=True)
+    throttled_sensor.refresh_state()
+    throttled_status: SystemThrottleStatus = throttled_sensor.state
 
     # Assert
     assert "0x50000" == throttled_status.status_hex
@@ -46,7 +50,8 @@ def test_read_throttle_status_throttled_under_voltage(mock_run):
 def test_read_throttle_status_when_not_available_for_platform(_):
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        ThrottledSensor(enabled=True).read()
+        throttled_sensor = ThrottledSensor(enabled=True)
+        throttled_sensor.refresh_state()
 
     # Assert error message
     assert "vcgencmd not available for this Rpi" in str(exec_info)

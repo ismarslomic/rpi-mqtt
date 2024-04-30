@@ -13,11 +13,20 @@ from sensors.utils import bytes_to_gibibytes, round_percent
 class DiskUseSensor(RpiSensor):
     """Sensor for disk usage"""
 
-    name: str = "disk_use"
+    _state: DiskUse | None = None
 
-    def read(self) -> DiskUse:
-        self.logger.debug("Reading sensor data")
-        return self._read_disk_use()
+    @property
+    def name(self) -> str:
+        return "disk_use"
+
+    @property
+    def state(self) -> DiskUse | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_disk_use()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_disk_use(self) -> DiskUse:
         """Read statistics about disk usage for path '/'"""
@@ -30,7 +39,6 @@ class DiskUseSensor(RpiSensor):
         path = "/"
         disk_usage: namedtuple = psutil.disk_usage(path)
 
-        self.logger.debug("Reading sensor data successfully")
         return DiskUse(
             path=path,
             total_gib=bytes_to_gibibytes(disk_usage.total),

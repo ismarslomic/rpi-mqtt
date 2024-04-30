@@ -11,12 +11,20 @@ from sensors.utils import date_and_timestamp_to_iso_datetime
 class BootloaderSensor(RpiSensor):
     """Sensor for bootloader version"""
 
-    name: str = "bootloader_version"
+    _state: BootloaderVersion | None = None
 
-    def read(self) -> BootloaderVersion:
-        self.logger.debug("Reading sensor data")
+    @property
+    def name(self) -> str:
+        return "bootloader_version"
 
-        return self._read_rpi_bootloader_version()
+    @property
+    def state(self) -> BootloaderVersion | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_rpi_bootloader_version()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_rpi_bootloader_version(self) -> BootloaderVersion:
         """Read current Rpi bootloader version and check for updates"""
@@ -53,7 +61,5 @@ class BootloaderSensor(RpiSensor):
             elif latest_version == "" and item_stripped.startswith("LATEST:"):
                 item_split = item_stripped.split("LATEST: ")
                 latest_version = date_and_timestamp_to_iso_datetime(item_split[1].strip())
-
-        self.logger.debug("Reading sensor data successfully")
 
         return BootloaderVersion(status=update_status, current=current_version, latest=latest_version)

@@ -11,11 +11,20 @@ from sensors.types import RpiSensor, SensorNotAvailableException
 class ThrottledSensor(RpiSensor):
     """Sensor for thermal throttling"""
 
-    name: str = "throttled"
+    _state: SystemThrottleStatus | None = None
 
-    def read(self) -> SystemThrottleStatus:
-        self.logger.debug("Reading sensor data")
-        return self._read_throttle_status()
+    @property
+    def name(self) -> str:
+        return "throttled"
+
+    @property
+    def state(self) -> SystemThrottleStatus | None:
+        return self._state
+
+    def refresh_state(self) -> None:
+        self.logger.debug("Refreshing sensor state")
+        self._state = self._read_throttle_status()
+        self.logger.debug("Refreshing sensor state successfully")
 
     def _read_throttle_status(self) -> SystemThrottleStatus:
         """Read current system thermal throttled status"""
@@ -47,7 +56,6 @@ class ThrottledSensor(RpiSensor):
         status_binary: str = bin(status_decimal)
         throttled_reasons: str = self._to_human_readable(status_decimal)
 
-        self.logger.debug("Reading sensor data successfully")
         return SystemThrottleStatus(
             status_hex=status_hex, status_decimal=status_decimal, status_binary=status_binary, reason=throttled_reasons
         )

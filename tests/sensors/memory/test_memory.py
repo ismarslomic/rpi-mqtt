@@ -19,7 +19,9 @@ def test_read_memory_use():
     psutil.virtual_memory = MagicMock(return_value=psutil_mock)
 
     # Call function
-    memory_use: MemoryUse = MemoryUseSensor(enabled=True).read()
+    memory_use_sensor = MemoryUseSensor(enabled=True)
+    memory_use_sensor.refresh_state()
+    memory_use: MemoryUse = memory_use_sensor.state
 
     # Assert
     assert 7.86 == memory_use.total_gib
@@ -35,7 +37,8 @@ def test_read_fans_fan_not_available_for_platform():
 
     # Call function
     with pytest.raises(SensorNotAvailableException) as exec_info:
-        MemoryUseSensor(enabled=True).read()
+        memory_use_sensor = MemoryUseSensor(enabled=True)
+        memory_use_sensor.refresh_state()
 
     # Assert error message
     assert "virtual_memory() not available for this Rpi" in str(exec_info)
