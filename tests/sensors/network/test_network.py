@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Tests to verify the network readings of Rpi"""
-
+import json
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
@@ -50,6 +50,44 @@ def test_read_wifi_connection_when_connected(_, mock_run):
     assert -43 == wifi_info.signal_strength_dbm
     assert 5520 == wifi_info.freq_mhz
     assert "a9:3a:dd:b1:cc:46" == wifi_info.mac_addr
+
+
+# patching 'iw' command run by the subprocess.run and reading mac address for Wi-Fi interface
+@patch("sensors.network.sensor.subprocess.run")
+@patch("builtins.open", new_callable=mock_open, read_data="a9:3a:dd:b1:cc:46")
+def test_read_wifi_connection_when_connected_as_dict(_, mock_run):
+    # Mock subprocess.run running iw to read Wi-Fi connection
+    iw_mock = (
+        "Connected to 04:42:1a:cf:15:c8 (on wlan0)\n"
+        "SSID: MyNetwork 5G-2\n"
+        "freq: 5520\n"
+        "RX: 12225826 bytes (52643 packets)\n"
+        "TX: 1402618 bytes (13162 packets)\n"
+        "signal: -43 dBm\n"
+        "rx bitrate: 433.3 MBit/s\n"
+        "tx bitrate: 433.3 MBit/s\n"
+        "\n"
+        "bss flags:      \n"
+        "dtim period:    1\n"
+        "beacon int:     100\n"
+    )
+    mock_proc = MagicMock(returncode=0, stdout=iw_mock)
+    mock_run.return_value = mock_proc
+
+    # Call function
+    wifi_connection_sensor = WifiConnectionSensor(enabled=True)
+    wifi_connection_sensor.refresh_state()
+    wifi_info: dict = wifi_connection_sensor.state_as_dict
+
+    # Assert Wi-Fi information returned
+    assert "on" == wifi_info["status"]
+    assert "MyNetwork 5G-2" == wifi_info["ssid"]
+    assert -43 == wifi_info["signal_strength_dbm"]
+    assert 5520 == wifi_info["freq_mhz"]
+    assert "a9:3a:dd:b1:cc:46" == wifi_info["mac_addr"]
+
+    # Assert JSON serialization
+    json.dumps(wifi_info)
 
 
 # patching 'iw' command run by the subprocess.run

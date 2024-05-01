@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Service for reading the Rpi fans speed"""
+from typing import Any
+
 import psutil
 
 from sensors.fan.types import FanSpeed
@@ -18,6 +20,10 @@ class FanSpeedSensor(RpiSensor):
     @property
     def state(self) -> dict[str, FanSpeed] | None:
         return self._state
+
+    @property
+    def state_as_dict(self) -> dict[str, dict[str, Any]] | None:
+        return self._nested_state_as_dict
 
     def refresh_state(self) -> None:
         self.logger.debug("Refreshing sensor state")

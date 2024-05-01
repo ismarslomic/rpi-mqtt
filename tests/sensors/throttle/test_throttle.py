@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Tests to verify the system throttle readings of Rpi"""
+import json
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -26,6 +27,28 @@ def test_read_throttle_status_not_throttled(mock_run):
     assert 0 == throttled_status.status_decimal
     assert "0b0" == throttled_status.status_binary
     assert "Not throttled" == throttled_status.reason
+
+
+# patching vcgencmd command run by the subprocess.run
+@patch("sensors.throttle.sensor.subprocess.run")
+def test_read_throttle_status_not_throttled_as_dict(mock_run):
+    # Mock subprocess.run running vcgencmd to read throttle status
+    mock_proc = MagicMock(returncode=0, stdout="throttled=0x0")
+    mock_run.return_value = mock_proc
+
+    # Call function
+    throttled_sensor = ThrottledSensor(enabled=True)
+    throttled_sensor.refresh_state()
+    throttled_status: dict = throttled_sensor.state_as_dict
+
+    # Assert
+    assert "0x0" == throttled_status["status_hex"]
+    assert 0 == throttled_status["status_decimal"]
+    assert "0b0" == throttled_status["status_binary"]
+    assert "Not throttled" == throttled_status["reason"]
+
+    # Assert JSON serialization
+    json.dumps(throttled_status)
 
 
 @patch("sensors.throttle.sensor.subprocess.run")

@@ -3,7 +3,9 @@
 
 import collections
 import importlib
+import json
 from collections import defaultdict, namedtuple
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import psutil
@@ -12,6 +14,8 @@ import pytest
 from sensors.temperature.sensor import TemperatureSensor
 from sensors.temperature.types import HwTemperature
 from sensors.types import SensorNotAvailableException
+
+# noinspection DuplicatedCode
 
 
 # patching vcgencmd command run by the subprocess.run
@@ -54,6 +58,51 @@ def test_read_temperature(mock_run):
     assert 51.0 == gpu_temp.current_c
     assert None is gpu_temp.high_c
     assert None is gpu_temp.critical_c
+
+
+# patching vcgencmd command run by the subprocess.run
+@patch("sensors.temperature.sensor.subprocess.run")
+def test_read_temperature_as_dict(mock_run):
+    # Mock psutil
+    ret: defaultdict[str, list] = collections.defaultdict(list)
+    shwtemp = namedtuple("shwtemp", ["label", "current", "high", "critical"])
+    ret["cpu_thermal"].append(shwtemp("", 46.365, 110.0, 110.0))
+    ret["rp1_adc"].append(shwtemp("", 54.31, None, None))
+
+    psutil.sensors_temperatures = MagicMock(return_value=ret)
+
+    # Mock subprocess.run running vcgencmd to read GPU temperature
+    mock_proc = MagicMock(returncode=0, stdout="temp=51.0'C")
+    mock_run.return_value = mock_proc
+
+    # Call function
+    temperature_sensor = TemperatureSensor(enabled=True)
+    temperature_sensor.refresh_state()
+    temps: dict[str, dict[str, Any]] = temperature_sensor.state_as_dict
+
+    # Assert 3 temperature readings
+    assert 3 == len(temps)
+
+    assert "cpu_thermal" in temps
+    cpu_temp: dict[str, float] = temps["cpu_thermal"]
+    assert 46.4 == cpu_temp["current_c"]
+    assert 110.0 == cpu_temp["high_c"]
+    assert 110.0 == cpu_temp["critical_c"]
+
+    assert "rp1_adc" in temps
+    adc_temp: dict[str, float] = temps["rp1_adc"]
+    assert 54.3 == adc_temp["current_c"]
+    assert None is adc_temp["high_c"]
+    assert None is adc_temp["critical_c"]
+
+    assert "gpu" in temps
+    gpu_temp: dict[str, float] = temps["gpu"]
+    assert 51.0 == gpu_temp["current_c"]
+    assert None is gpu_temp["high_c"]
+    assert None is gpu_temp["critical_c"]
+
+    # Assert converting to JSON
+    json.dumps(temps)
 
 
 def test_read_temperature_when_sensors_temperatures_not_available_for_platform():

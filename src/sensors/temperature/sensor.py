@@ -3,6 +3,7 @@
 
 import subprocess
 from collections import defaultdict
+from typing import Any
 
 import psutil
 
@@ -23,6 +24,10 @@ class TemperatureSensor(RpiSensor):
     @property
     def state(self) -> dict[str, HwTemperature] | None:
         return self._state
+
+    @property
+    def state_as_dict(self) -> dict[str, dict[str, Any]] | None:
+        return self._nested_state_as_dict
 
     def refresh_state(self) -> None:
         self.logger.debug("Refreshing sensor state")

@@ -3,6 +3,7 @@
 
 import logging
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class RpiSensor(ABC):
@@ -18,7 +19,7 @@ class RpiSensor(ABC):
 
     @property
     @abstractmethod
-    def state(self) -> object | None:
+    def state(self) -> dict | object | None:
         """Get the current state for this sensor."""
         raise NotImplementedError("Property get state must be implemented in sensor sub-class.")
 
@@ -29,6 +30,20 @@ class RpiSensor(ABC):
             return vars(self.state)
 
         return self.state
+
+    @property
+    def _nested_state_as_dict(self) -> dict[str, dict[str, Any]] | None:
+        """Get the current state for this sensor as dictionary or plain value. Useful for JSON serializing."""
+
+        if not self.available():
+            return None
+
+        state_dict: dict[str, dict[str, Any]] = {}
+
+        for key, value in self.state.items():
+            state_dict[key] = vars(value)
+
+        return state_dict
 
     def __init__(self, enabled: bool):
         self._enabled = enabled
