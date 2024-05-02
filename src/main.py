@@ -18,7 +18,7 @@ if __name__ == "__main__":
     set_global_log_config(settings=user_settings)
 
     sensors = create_sensors(settings=user_settings)
-    all_sensors = AllRpiSensors(sensors=sensors)
+    all_sensors = AllRpiSensors(sensors=sensors, script_settings=user_settings.script)
     all_sensors_as_dict = all_sensors.as_dict()
 
     print(f"Publishing to MQTT data:{json.dumps(all_sensors_as_dict)}")

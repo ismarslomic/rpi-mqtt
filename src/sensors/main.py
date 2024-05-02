@@ -4,6 +4,7 @@
 from collections import OrderedDict
 from typing import List
 
+from date_utils import now_to_iso_datetime
 from sensors.bootloader.sensor import BootloaderSensor
 from sensors.cpu.sensor import CpuLoadAvgSensor, CpuUsePctSensor
 from sensors.disk.sensor import DiskUseSensor
@@ -21,7 +22,7 @@ from sensors.os.sensor import AvailableUpdatesSensor, BootTimeSensor, OsKernelSe
 from sensors.temperature.sensor import TemperatureSensor
 from sensors.throttle.sensor import ThrottledSensor
 from sensors.types import RpiSensor
-from settings.types import Settings
+from settings.types import ScriptSettings, Settings
 
 
 def create_sensors(settings: Settings) -> List[RpiSensor]:
@@ -52,20 +53,41 @@ def create_sensors(settings: Settings) -> List[RpiSensor]:
 class AllRpiSensors:
     """Class representing all sensors"""
 
-    # Disable Too few public methods (1/2)
-    # pylint: disable=R0903
-
     sensors: List[RpiSensor]
+    update_interval: int
+    sensors_total: int = 0
+    sensors_available: int = 0
 
-    def __init__(self, sensors: List[RpiSensor]):
+    def __init__(self, sensors: List[RpiSensor], script_settings: ScriptSettings):
         self.sensors = sensors
+        self.update_interval = script_settings.update_interval
+        self.sensors_total = len(self.sensors)
+
+    def metadata(self) -> dict[str, str | int]:
+        """Returns dictionary with metadata properties"""
+        return {
+            "states_refresh_ts": now_to_iso_datetime(),
+            "update_interval": self.update_interval,
+            "sensors_total": self.sensors_total,
+            "sensors_available": self.sensors_available,
+        }
 
     def as_dict(self) -> OrderedDict:
         """Sensor states as ordered dict"""
+
         sensors_as_dict: OrderedDict = OrderedDict()
+        self.sensors_available = 0
+
+        # Loop all sensors and add to ordered dictionary
         for sensor in self.sensors:
             if sensor.available():
+                self.sensors_available += 1
+                sensor.refresh_state()
                 sensors_as_dict[sensor.name] = sensor.state_as_dict
+
+        # Add metadata properties
+        sensors_as_dict["metadata"] = self.metadata()
+
         return sensors_as_dict
 
 
