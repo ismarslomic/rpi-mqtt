@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Interface for Rpi sensors API"""
+"""Common types in module Sensors"""
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Any
+from collections import OrderedDict
+from typing import Any, List
+
+from date_utils import now_to_iso_datetime
+from settings.types import ScriptSettings
 
 
 class RpiSensor(ABC):
@@ -71,6 +75,56 @@ class RpiSensor(ABC):
         """Indicates if this sensor is enabled by the user."""
 
         return self._enabled
+
+
+class AllRpiSensors:
+    """Class representing all sensors"""
+
+    sensors: List[RpiSensor] = []
+    available_sensors: List[RpiSensor] = []
+    update_interval: int
+    sensors_total: int = 0
+    sensors_available: int = 0
+
+    def __init__(self, sensors: List[RpiSensor], script_settings: ScriptSettings):
+        self.sensors = sensors
+
+        for sensor in self.sensors:
+            if sensor.available():
+                self.available_sensors.append(sensor)
+
+        self.update_interval = script_settings.update_interval
+        self.sensors_total = len(self.sensors)
+        self.sensors_available = len(self.available_sensors)
+
+    def _metadata_properties(self) -> dict[str, str | int]:
+        """Returns dictionary with metadata properties"""
+        return {
+            "states_refresh_ts": now_to_iso_datetime(),
+            "update_interval": self.update_interval,
+            "sensors_total": self.sensors_total,
+            "sensors_available": self.sensors_available,
+        }
+
+    def refresh_available_sensors(self):
+        """Refreshes state of all sensors that are available for this Rpi."""
+
+        for sensor in self.available_sensors:
+            sensor.refresh_state()
+
+    def as_dict(self) -> OrderedDict:
+        """Sensor states as ordered dict"""
+
+        sensors_as_dict: OrderedDict = OrderedDict()
+
+        # Loop all sensors and add to ordered dictionary
+        for sensor in self.available_sensors:
+            sensors_as_dict[sensor.name] = sensor.state_as_dict
+
+        # Add metadata properties
+        sensors_as_dict["metadata"] = self._metadata_properties()
+
+        return sensors_as_dict
 
 
 class SensorNotAvailableException(Exception):

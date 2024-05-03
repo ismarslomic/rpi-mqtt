@@ -9,9 +9,11 @@ from time import sleep
 from mqtt.mqtt_client import RpiMqttClient
 from mqtt.mqtt_pub import RpiMqttPublisher
 from mqtt.repeat_timer import RepeatTimer
+from mqtt.types import RpiMqttTopics
+from sensors.main import create_sensors
 from sensors.network.sensor import HostnameSensor
-from sensors.types import SensorNotAvailableException
-from settings.types import MqttSettings, ScriptSettings
+from sensors.types import AllRpiSensors, RpiSensor, SensorNotAvailableException
+from settings.types import MqttSettings, ScriptSettings, SensorsMonitoringSettings, Settings
 
 
 def _sensor_name(mqtt_settings: MqttSettings, logger: logging.Logger) -> str:
@@ -33,26 +35,24 @@ def _sensor_name(mqtt_settings: MqttSettings, logger: logging.Logger) -> str:
     return sensor_name
 
 
-def start_pub_sub(mqtt_settings: MqttSettings, script_settings: ScriptSettings):
+def start_pub_sub(user_settings: Settings):
     """Function starting the MQTT pub and sub"""
 
     # Define logger
     logger: logging.Logger = logging.getLogger(__name__)
 
+    # Settings
+    mqtt_settings: MqttSettings = user_settings.mqtt
+    script_settings: ScriptSettings = user_settings.script
+    sensor_settings: SensorsMonitoringSettings = user_settings.sensors
+
     # Sensor name
     sensor_name: str = _sensor_name(mqtt_settings=mqtt_settings, logger=logger)
 
     # Mqtt Topics
-    base_topic: str = mqtt_settings.base_topic.lower()
-    command_base_topic: str = f"{base_topic}/command/{sensor_name}"
-    lwt_topic_names: list[str] = [
-        f"{base_topic}/sensor/{sensor_name}/status",
-        f"{base_topic}/command/{sensor_name}/status",
-    ]
+    mqtt_topics = RpiMqttTopics(mqtt_settings=mqtt_settings, sensor_name=sensor_name)
 
     logger.info("Publish & Subscribe main script")
-    # publish()
-    # subscribe()
 
     lwt_update_interval_sec: int = 60
     sensor_update_interval_sec: int = script_settings.update_interval
@@ -66,13 +66,15 @@ def start_pub_sub(mqtt_settings: MqttSettings, script_settings: ScriptSettings):
     # pylint: disable=W0718
     try:
         # Mqtt client
-        mqtt_client = RpiMqttClient(
-            settings=mqtt_settings, lwt_topic_names=lwt_topic_names, command_base_topic=command_base_topic
-        )
+        mqtt_client = RpiMqttClient(settings=mqtt_settings, mqtt_topics=mqtt_topics)
         mqtt_client.connect_and_loop()
 
+        # Sensor states
+        sensors: list[RpiSensor] = create_sensors(sensor_settings=sensor_settings)
+        all_sensors: AllRpiSensors = AllRpiSensors(sensors=sensors, script_settings=script_settings)
+
         # Mqtt publisher
-        publisher = RpiMqttPublisher(mqtt_client=mqtt_client, lwt_topics=lwt_topic_names)
+        publisher = RpiMqttPublisher(mqtt_client=mqtt_client, mqtt_topics=mqtt_topics, all_sensors=all_sensors)
 
         # Publish LWT messages initially and in repeat
         publisher.pub_online_lwt()
