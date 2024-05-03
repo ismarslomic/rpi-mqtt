@@ -19,6 +19,7 @@ class RpiMqttTopics:
         self.base_topic = mqtt_settings.base_topic.lower()
 
         self.command_base_topic = f"{self.base_topic}/command/{sensor_name}"
+        self.command_topic_names = []
 
         self.lwt_topic_names = [
             f"{self.base_topic}/sensor/{sensor_name}/status",
