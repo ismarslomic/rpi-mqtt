@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Tests to verify reading settings file"""
-from pathlib import Path
 
 from settings.settings import read_settings
 from settings.types import MqttSettings, ScriptSettings, SensorsMonitoringSettings, Settings
+from tests.utils.settings_utils import read_test_settings
 
 
 def test_default_settings():
@@ -29,13 +29,8 @@ def test_default_settings():
 
 
 def test_settings_from_file():
-    # Sample file
-    current_folder: Path = Path(__file__).resolve().parent
-    sample_file_name: str = "sample_settings.yml"
-    sample_file_path: str = current_folder.joinpath(sample_file_name).__str__()
-
     # Call function
-    settings: Settings = read_settings(sample_file_path)
+    settings: Settings = read_test_settings()
     mqtt_settings: MqttSettings = settings.mqtt
     script_settings: ScriptSettings = settings.script
     sensors_settings: SensorsMonitoringSettings = settings.sensors

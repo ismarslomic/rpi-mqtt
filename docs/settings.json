@@ -94,6 +94,19 @@
           "description": "The MQTT base topic under which to publish the Raspberry Pi sensor data topics",
           "title": "Base Topic"
         },
+        "discovery_topic_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "homeassistant",
+          "description": "The prefix for Mqtt Discovery topic subscribed by Home Assistant.",
+          "title": "Discovery Topic Prefix"
+        },
         "sensor_name": {
           "anyOf": [
             {
@@ -291,6 +304,7 @@
         "authentication": null,
         "tls": null,
         "base_topic": "home/nodes",
+        "discovery_topic_prefix": "homeassistant",
         "sensor_name": "rpi-{hostname}"
       },
       "description": "Settings for the MQTT broker connection"

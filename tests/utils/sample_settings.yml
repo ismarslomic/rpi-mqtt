@@ -3,6 +3,7 @@ mqtt:
   hostname: 192.168.0.1
   port: 1337
   client_id: foo-bar-client-id
+  base_topic: foo/bar
   authentication:
     username: foo_username
     password: bar_password

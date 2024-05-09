@@ -2,9 +2,12 @@
 """Service for reading the Rpi bootloader version"""
 
 import subprocess
+from typing import List
 
+from mqtt.constants import PAYLOAD_LWT_OFFLINE, PAYLOAD_LWT_ONLINE
+from mqtt.types import RpiMqttTopics
 from sensors.bootloader.types import BootloaderVersion
-from sensors.types import RpiSensor, SensorNotAvailableException
+from sensors.types import MqttDiscoveryEntity, MqttDiscoveryMessage, RpiSensor, SensorNotAvailableException
 from sensors.utils import date_and_timestamp_to_iso_datetime
 
 
@@ -20,6 +23,43 @@ class BootloaderSensor(RpiSensor):
     @property
     def state(self) -> BootloaderVersion | None:
         return self._state
+
+    def mqtt_discovery_messages(self, topics: RpiMqttTopics) -> List[MqttDiscoveryMessage]:
+        binary_sensor = MqttDiscoveryEntity(
+            name="Bootloader update",
+            unique_id="rpi_bootloader_update",
+            component="binary_sensor",
+            device_class="update",
+            value_template=f"{{{{ value_json.{self.name}.status }}}}",
+            base_topic=topics.sensor_states_base_topic,
+            state_topic=topics.sensor_states_topic_abbr,
+            availability_topic=topics.sensor_states_lwt_topic_abbr,
+            payload_available=PAYLOAD_LWT_ONLINE,
+            payload_not_available=PAYLOAD_LWT_OFFLINE,
+            payload_on="update available",
+            payload_off="up to date",
+        )
+
+        binary_sensor_dict: dict = vars(binary_sensor)
+
+        # Rename 'base_topic' with '~'
+        binary_sensor_dict["~"] = binary_sensor_dict["base_topic"]
+        del binary_sensor_dict["base_topic"]
+
+        # Remove None values
+        for k, v in list(binary_sensor_dict.items()):
+            if v is None:
+                del binary_sensor_dict[k]
+
+        discovery_topic: str = topics.discovery_topic(
+            component=binary_sensor.component, unique_id=binary_sensor.unique_id
+        )
+
+        discovery_messages: List[MqttDiscoveryMessage] = [
+            MqttDiscoveryMessage(payload=binary_sensor_dict, topic=discovery_topic)
+        ]
+
+        return discovery_messages
 
     def refresh_state(self) -> None:
         self.logger.debug("Refreshing sensor state")

@@ -8,7 +8,7 @@ from time import sleep
 
 import paho.mqtt.client as mqtt
 
-from mqtt.mqtt_pub import RpiMqttPublisher
+from mqtt.constants import PAYLOAD_LWT_OFFLINE
 from mqtt.types import RpiMqttTopics
 from settings.types import MqttSettings
 
@@ -39,7 +39,7 @@ class RpiMqttClient(mqtt.Client):
 
         # Define will message for lwt topics
         for lwt_topic in self.mqtt_topics.lwt_topic_names:
-            self.will_set(lwt_topic, payload=RpiMqttPublisher.PAYLOAD_LWT_OFFLINE, retain=True)
+            self.will_set(lwt_topic, payload=PAYLOAD_LWT_OFFLINE, retain=True)
 
         # noinspection PyBroadException
         # pylint: disable=W0718

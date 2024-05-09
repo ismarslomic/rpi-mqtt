@@ -41,6 +41,10 @@ class MqttSettings(BaseModel):
         default="home/nodes",
         description="The MQTT base topic under which to publish the Raspberry Pi sensor data topics",
     )
+    discovery_topic_prefix: Optional[str] = Field(
+        default="homeassistant",
+        description="The prefix for Mqtt Discovery topic subscribed by Home Assistant.",
+    )
     sensor_name: Optional[str] = Field(
         default="rpi-{hostname}",
         description="The MQTT name for this Raspberry Pi as a sensor. Defaults to rpi-<rpi hostname>.",

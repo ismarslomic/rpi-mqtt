@@ -90,6 +90,9 @@ def start_pub_sub(user_settings: Settings):
         )
         sensor_update_scheduler.start()
 
+        # Publish discovery messages
+        publisher.pub_discovery_message()
+
         while True:
             sleep(10000)
     except Exception:
