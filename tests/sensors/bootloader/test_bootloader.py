@@ -62,7 +62,7 @@ def test_read_bootloader_version_up_to_date_mqtt_entities(mock_run):
 
     # Assert discovery payload
     payload: dict = discovery_messages[0].payload
-    assert len(payload.items()) == 12
+    assert len(payload.items()) == 14
     assert payload["name"] == "Bootloader update"
     assert payload["unique_id"] == "rpi_bootloader_update"
     assert payload["component"] == "binary_sensor"
@@ -75,6 +75,8 @@ def test_read_bootloader_version_up_to_date_mqtt_entities(mock_run):
     assert payload["payload_on"] == "update available"
     assert payload["payload_off"] == "up to date"
     assert payload["~"] == "foo/bar/sensor/my_sensor"
+    assert payload["json_attributes_topic"] == "~/monitor"
+    assert payload["json_attributes_template"] == "{{ value_json.bootloader_version | tojson }}"
 
     # Assert discovery topic
     topic: str = discovery_messages[0].topic

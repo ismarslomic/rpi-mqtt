@@ -38,6 +38,8 @@ class BootloaderSensor(RpiSensor):
             payload_not_available=PAYLOAD_LWT_OFFLINE,
             payload_on="update available",
             payload_off="up to date",
+            json_attributes_topic=topics.sensor_states_topic_abbr,
+            json_attributes_template=f"{{{{ value_json.{self.name} | tojson }}}}",
         )
 
         binary_sensor_dict: dict = vars(binary_sensor)
