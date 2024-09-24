@@ -57,7 +57,7 @@ class RpiMqttClient(mqtt.Client):
             sys.exit(1)
 
     # noinspection PyMethodOverriding, PyUnusedLocal
-    # pylint: disable=W0613, R0913
+    # pylint: disable=W0613, R0913, R0917
     def on_connect_callback(self, client: mqtt.Client, userdata, flags, reason_code: mqtt.ReasonCode, properties):
         """The callback called when the broker responds to our connection request."""
 
