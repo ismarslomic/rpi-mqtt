@@ -24,6 +24,9 @@ class BootloaderSensor(RpiSensor):
     def state(self) -> BootloaderVersion | None:
         return self._state
 
+    # pylint: disable=R0801
+    # noinspection DuplicatedCode
+    # TODO: clean up the duplicated code
     def mqtt_discovery_messages(self, topics: RpiMqttTopics) -> List[MqttDiscoveryMessage]:
         binary_sensor = MqttDiscoveryEntity(
             name="Bootloader update",

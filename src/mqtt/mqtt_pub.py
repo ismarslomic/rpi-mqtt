@@ -59,7 +59,7 @@ class RpiMqttPublisher:
 
         for sensor in self.all_sensors.available_sensors:
             # temporary filter, to be removed
-            if sensor.name == "bootloader_version":
+            if sensor.name == "bootloader_version" or sensor.name == "throttled":
                 mqtt_discovery_messages: List[MqttDiscoveryMessage] = sensor.mqtt_discovery_messages(
                     topics=self.mqtt_topics
                 )

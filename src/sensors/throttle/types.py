@@ -8,6 +8,9 @@ from dataclasses import dataclass
 class SystemThrottleStatus:
     """Class representing system throttle status"""
 
+    status: str
+    """Throttling status simplified as binary string, 'throttled' or 'not throttled'."""
+
     status_hex: str
     """Throttling status represented as hexadecimal value. Example: '0x50000'"""
 

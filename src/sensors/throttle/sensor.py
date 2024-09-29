@@ -2,10 +2,12 @@
 """Service for reading the system thermal throttling of Rpi"""
 
 import subprocess
-from typing import Union
+from typing import List, Union
 
+from mqtt.constants import PAYLOAD_LWT_OFFLINE, PAYLOAD_LWT_ONLINE
+from mqtt.types import RpiMqttTopics
 from sensors.throttle.types import SystemThrottleStatus
-from sensors.types import RpiSensor, SensorNotAvailableException
+from sensors.types import MqttDiscoveryEntity, MqttDiscoveryMessage, RpiSensor, SensorNotAvailableException
 
 
 class ThrottledSensor(RpiSensor):
@@ -20,6 +22,48 @@ class ThrottledSensor(RpiSensor):
     @property
     def state(self) -> SystemThrottleStatus | None:
         return self._state
+
+    # pylint: disable=R0801
+    # noinspection DuplicatedCode
+    # TODO: clean up the duplicated code
+    def mqtt_discovery_messages(self, topics: RpiMqttTopics) -> List[MqttDiscoveryMessage]:
+        binary_sensor = MqttDiscoveryEntity(
+            name="Rpi Throttled",
+            unique_id="rpi_throttled_status",
+            component="binary_sensor",
+            device_class=None,
+            value_template=f"{{{{ value_json.{self.name}.status }}}}",
+            base_topic=topics.sensor_states_base_topic,
+            state_topic=topics.sensor_states_topic_abbr,
+            availability_topic=topics.sensor_states_lwt_topic_abbr,
+            payload_available=PAYLOAD_LWT_ONLINE,
+            payload_not_available=PAYLOAD_LWT_OFFLINE,
+            payload_on="throttled",
+            payload_off="not throttled",
+            json_attributes_topic=topics.sensor_states_topic_abbr,
+            json_attributes_template=f"{{{{ value_json.{self.name} | tojson }}}}",
+        )
+
+        binary_sensor_dict: dict = vars(binary_sensor)
+
+        # Rename 'base_topic' with '~'
+        binary_sensor_dict["~"] = binary_sensor_dict["base_topic"]
+        del binary_sensor_dict["base_topic"]
+
+        # Remove None values
+        for k, v in list(binary_sensor_dict.items()):
+            if v is None:
+                del binary_sensor_dict[k]
+
+        discovery_topic: str = topics.discovery_topic(
+            component=binary_sensor.component, unique_id=binary_sensor.unique_id
+        )
+
+        discovery_messages: List[MqttDiscoveryMessage] = [
+            MqttDiscoveryMessage(payload=binary_sensor_dict, topic=discovery_topic)
+        ]
+
+        return discovery_messages
 
     def refresh_state(self) -> None:
         self.logger.debug("Refreshing sensor state")
@@ -55,9 +99,14 @@ class ThrottledSensor(RpiSensor):
         status_decimal: int = self._convert_hex_to_integer(status_hex)
         status_binary: str = bin(status_decimal)
         throttled_reasons: str = self._to_human_readable(status_decimal)
+        status: str = "not throttled" if status_decimal == 0 else "throttled"
 
         return SystemThrottleStatus(
-            status_hex=status_hex, status_decimal=status_decimal, status_binary=status_binary, reason=throttled_reasons
+            status=status,
+            status_hex=status_hex,
+            status_decimal=status_decimal,
+            status_binary=status_binary,
+            reason=throttled_reasons,
         )
 
     def _get_status_as_hex(self, raw: str) -> Union[str, None]:
