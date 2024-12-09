@@ -19,7 +19,7 @@ pylint = "^3.3.2"
 isort = "^5.13.2"
 pytest-cov = "^6.0.0"
 pre-commit = "^4.0.1"
-jsonschema-markdown = "^0.3.17"
+jsonschema-markdown = "^0.3.18"
 black = "^24.10.0"
 
 [tool.poetry.scripts]
