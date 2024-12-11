@@ -280,19 +280,20 @@ files = [
 
 [[package]]
 name = "jsonschema-markdown"
-version = "0.3.17"
+version = "0.3.18"
 description = "Export a JSON Schema document to Markdown documentation."
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "jsonschema_markdown-0.3.17-py3-none-any.whl", hash = "sha256:aa1b3eeccdc32c6b2e0530083dedf9edd089f070f43750cc8e354c2dbb05fea4"},
-    {file = "jsonschema_markdown-0.3.17.tar.gz", hash = "sha256:0d9988e680ac0bfcaa4d2e4735bc6e4eff8af8fbb45bb5e157b0c922b06a9a28"},
+    {file = "jsonschema_markdown-0.3.18-py3-none-any.whl", hash = "sha256:4e5e1f9ab71f0ac4bd7782fa2616d78eeeafb5485c8483d37ac2b0b77e9d2185"},
+    {file = "jsonschema_markdown-0.3.18.tar.gz", hash = "sha256:6ec996d3b7ae24e9b5294c9de0af61e4cceb44e7238dafeffc44f84779326cdd"},
 ]
 
 [package.dependencies]
 click = ">=8.1.7,<9.0.0"
 jsonref = ">=1.1.0,<2.0.0"
 loguru = ">=0.7.2,<0.8.0"
+pyyaml = ">=6.0.2,<7.0.0"
 
 [[package]]
 name = "loguru"
@@ -775,4 +776,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "0f65603a1cbde88f498ccb3ed42972635d456a21f9d46adf440c55be9cad9cff"
+content-hash = "1c43904d9aa0bd4f7a535aac02998ae199ee4b4f895b20b9e375cbacf3022d6f"
