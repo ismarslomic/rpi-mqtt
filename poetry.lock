@@ -463,13 +463,13 @@ test = ["pytest", "pytest-xdist", "setuptools"]
 
 [[package]]
 name = "pydantic"
-version = "2.10.4"
+version = "2.10.5"
 description = "Data validation using Python type hints"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pydantic-2.10.4-py3-none-any.whl", hash = "sha256:597e135ea68be3a37552fb524bc7d0d66dcf93d395acd93a00682f1efcb8ee3d"},
-    {file = "pydantic-2.10.4.tar.gz", hash = "sha256:82f12e9723da6de4fe2ba888b5971157b3be7ad914267dea8f05f82b28254f06"},
+    {file = "pydantic-2.10.5-py3-none-any.whl", hash = "sha256:4dd4e322dbe55472cb7ca7e73f4b63574eecccf2835ffa2af9021ce113c83c53"},
+    {file = "pydantic-2.10.5.tar.gz", hash = "sha256:278b38dbbaec562011d659ee05f63346951b3a248a6f3642e1bc68894ea2b4ff"},
 ]
 
 [package.dependencies]
@@ -776,4 +776,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "e144416efd5560abb49b9083673075c96ca72063550e0ba9a3a14b34aef691da"
+content-hash = "bb87b0d571dc3ae91bc274367a6bb009f1b8a3c472ca50f7cfc0807ae8b82338"
