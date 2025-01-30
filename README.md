@@ -8,6 +8,15 @@
 
 ## Installation
 
+### Experimenting with nix
+```shell
+# Install nix, see https://nixos.org/download/#nix-install-linux
+$ sh <(curl -L https://nixos.org/nix/install) --daemon
+
+# Create nix shell
+nix-shell
+```
+
 ```bash
 # Clone this git repo
 git clone https://github.com/ismarslomic/rpi-mqtt.git
