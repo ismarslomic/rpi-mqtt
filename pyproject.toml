@@ -14,7 +14,7 @@ pydantic = "^2.10.6"
 paho-mqtt = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.3.4"
+pytest = "^8.3.5"
 pylint = "^3.3.4"
 isort = "^6.0.1"
 pytest-cov = "^6.0.0"
