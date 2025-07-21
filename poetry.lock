@@ -296,14 +296,14 @@ files = [
 
 [[package]]
 name = "jsonschema-markdown"
-version = "2025.5.0"
+version = "2025.7.0"
 description = "Export a JSON Schema document to Markdown documentation."
 optional = false
-python-versions = "~=3.9"
+python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "jsonschema_markdown-2025.5.0-py3-none-any.whl", hash = "sha256:a932c9b11eaf7c6f45f49b14092967c03c8653d02121250d87ec885d6d936198"},
-    {file = "jsonschema_markdown-2025.5.0.tar.gz", hash = "sha256:ebe25aad0fe29c050ef7a0a6868db45422b671c4dae1d781638f6c9cb339a974"},
+    {file = "jsonschema_markdown-2025.7.0-py3-none-any.whl", hash = "sha256:18561bbb5cb098263e64f38e93d5081c5307e8ba1cd5b840bbd5407e3ac0690a"},
+    {file = "jsonschema_markdown-2025.7.0.tar.gz", hash = "sha256:59fb1c2343e091af252130251ddee262119f4497125d51235ccc05c02dad7f5a"},
 ]
 
 [package.dependencies]
@@ -840,4 +840,4 @@ dev = ["black (>=19.3b0) ; python_version >= \"3.6\"", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "f9af38ad4e6ac9749c47ddb2cf85ea3774ae5100baa4fd864bc326d12f432504"
+content-hash = "d70dc65057224fd8de01d2644ab296dad39458665681250b2b425b81f8455dbe"
