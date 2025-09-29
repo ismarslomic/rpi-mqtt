@@ -9,7 +9,7 @@ packages = [{ include = "mqtt", from = "src" }]
 [tool.poetry.dependencies]
 python = "^3.12"
 psutil = "^7.1.0"
-pyyaml = "^6.0.1"
+pyyaml = "^6.0.3"
 pydantic = "^2.11.9"
 paho-mqtt = "^2.1.0"
 
