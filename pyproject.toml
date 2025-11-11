@@ -18,7 +18,7 @@ pytest = "^8.4.2"
 pylint = "^4.0.2"
 isort = "^7.0.0"
 pytest-cov = "^7.0.0"
-pre-commit = "^4.3.0"
+pre-commit = "^4.4.0"
 jsonschema-markdown = "^2025.10.1"
 black = "^25.11.0"
 
