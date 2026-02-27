@@ -16,7 +16,7 @@ paho-mqtt = "^2.1.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.2"
 pylint = "^4.0.5"
-isort = "^7.0.0"
+isort = "^8.0.0"
 pytest-cov = "^7.0.0"
 pre-commit = "^4.5.1"
 jsonschema-markdown = "^2025.11.0"
