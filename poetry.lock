@@ -330,14 +330,14 @@ files = [
 
 [[package]]
 name = "jsonschema-markdown"
-version = "2026.3.0"
+version = "2026.5.0"
 description = "Export a JSON Schema document to Markdown documentation."
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "jsonschema_markdown-2026.3.0-py3-none-any.whl", hash = "sha256:5e749f17ec30679cd657d037030a3b884d868cec5337ed5f46c45c5712cf3f7b"},
-    {file = "jsonschema_markdown-2026.3.0.tar.gz", hash = "sha256:4b7eeb44767eda14b0550f27dc1e786c6e0a9bbdd2c426966e8cab046a841c17"},
+    {file = "jsonschema_markdown-2026.5.0-py3-none-any.whl", hash = "sha256:8e5bcc3292b779d15436de33f9c4e0dcfa604b061009cebcaf0d822fe64f7946"},
+    {file = "jsonschema_markdown-2026.5.0.tar.gz", hash = "sha256:a52e40c4bf39859a89d77dc92008c812e240df8c5b7bac093e6e1c8b9181af56"},
 ]
 
 [package.dependencies]
